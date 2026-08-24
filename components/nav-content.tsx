@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { buildNavItems } from "@/components/nav-items"
 import { LogoutButton } from "@/components/logout-button"
-import { ThemeToggle } from "@/components/theme-toggle"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { roleLabels } from "@/lib/role-labels"
 import type { RoleName } from "@/lib/data/types"
@@ -78,8 +77,7 @@ export function NavContent({
       </nav>
 
       <div className="flex flex-col gap-2 border-t border-sidebar-border pt-4">
-        <div className="flex items-center justify-between gap-2 px-2">
-          <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 px-2">
             <Avatar className="size-9">
               <AvatarFallback className="bg-sidebar-accent text-sidebar-accent-foreground text-xs">
                 {initials}
@@ -93,8 +91,6 @@ export function NavContent({
                 {roleLabels[role]}
               </span>
             </div>
-          </div>
-          <ThemeToggle />
         </div>
         <LogoutButton />
       </div>

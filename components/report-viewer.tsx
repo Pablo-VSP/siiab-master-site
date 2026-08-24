@@ -74,8 +74,6 @@ export function ReportViewer({
               title={title}
               className="size-full"
               allowFullScreen
-              onError={() => setLoadError(true)}
-              sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
             />
           )}
         </div>

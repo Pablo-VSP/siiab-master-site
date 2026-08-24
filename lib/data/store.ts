@@ -7,7 +7,7 @@ import type {
 } from "./types"
 
 // Interfaz de almacenamiento. La app SIEMPRE consume `getStore()` y nunca
-// una implementacion concreta, de modo que cambiar de memoria a BigQuery
+// una implementacion concreta, de modo que cambiar de SQLite a BigQuery
 // (o a Postgres) sea transparente para el resto del codigo.
 export interface DataStore {
   // Usuarios
@@ -53,17 +53,20 @@ export interface DataStore {
 }
 
 // Singleton. Guardamos la instancia en globalThis para sobrevivir al
-// hot-reload de Next en desarrollo (de lo contrario el seed se reiniciaria
-// en cada recarga de modulo).
-import { MemoryStore } from "./memory-store"
+// hot-reload de Next en desarrollo.
+import { SqliteStore } from "./sqlite-store"
+import { seedIfEmpty } from "./seed"
 
-const globalForStore = globalThis as unknown as { __portalStore?: DataStore }
+const globalForStore = globalThis as unknown as { __portalStore?: DataStore; __portalSeeded?: boolean }
 
 export function getStore(): DataStore {
   if (!globalForStore.__portalStore) {
-    // Para migrar a BigQuery: reemplazar por `new BigQueryStore(...)`.
-    // Ver lib/data/bigquery-store.ts para el stub documentado.
-    globalForStore.__portalStore = new MemoryStore()
+    globalForStore.__portalStore = new SqliteStore()
+    // Seed asíncrono en background (solo la primera vez)
+    if (!globalForStore.__portalSeeded) {
+      globalForStore.__portalSeeded = true
+      seedIfEmpty().catch((err) => console.error("[seed] Error:", err))
+    }
   }
   return globalForStore.__portalStore
 }
