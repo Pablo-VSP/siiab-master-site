@@ -1,21 +1,32 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import { Search } from "lucide-react"
+import { FileSearch, LayoutGrid, List, Network, Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import {
   ToggleGroup,
   ToggleGroupItem,
 } from "@/components/ui/toggle-group"
+import { Button } from "@/components/ui/button"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
 import { ResourceCard, type ResourceWithProject } from "@/components/resource-card"
-import { FileSearch } from "lucide-react"
+import { ResourceTable } from "@/components/resource-table"
+import { ResourceTree } from "@/components/resource-tree"
 
 type Filter = "all" | "report" | "site"
+type ViewMode = "cards" | "table" | "tree"
+
+const viewOptions: { value: ViewMode; label: string; icon: typeof LayoutGrid }[] = [
+  { value: "cards", label: "Tarjetas", icon: LayoutGrid },
+  { value: "table", label: "Tabla", icon: List },
+  { value: "tree", label: "Árbol", icon: Network },
+]
 
 export function CatalogSearch({ resources }: { resources: ResourceWithProject[] }) {
   const [query, setQuery] = useState("")
   const [filter, setFilter] = useState<Filter>("all")
+  const [view, setView] = useState<ViewMode>("cards")
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -43,15 +54,44 @@ export function CatalogSearch({ resources }: { resources: ResourceWithProject[] 
             aria-label="Buscar recursos"
           />
         </div>
-        <ToggleGroup
-          value={[filter]}
-          onValueChange={(v) => setFilter(((v[0] as Filter) ?? "all"))}
-          className="w-full sm:w-auto"
-        >
-          <ToggleGroupItem value="all">Todos</ToggleGroupItem>
-          <ToggleGroupItem value="report">Reportes</ToggleGroupItem>
-          <ToggleGroupItem value="site">Sitios</ToggleGroupItem>
-        </ToggleGroup>
+        <div className="flex items-center gap-2">
+          <ToggleGroup
+            value={[filter]}
+            onValueChange={(v) => setFilter(((v[0] as Filter) ?? "all"))}
+            className="w-full sm:w-auto"
+          >
+            <ToggleGroupItem value="all">Todos</ToggleGroupItem>
+            <ToggleGroupItem value="report">Reportes</ToggleGroupItem>
+            <ToggleGroupItem value="site">Sitios</ToggleGroupItem>
+          </ToggleGroup>
+
+          <div className="hidden items-center gap-0.5 rounded-lg border border-border p-0.5 sm:flex">
+            <TooltipProvider delayDuration={300}>
+              {viewOptions.map((opt) => {
+                const Icon = opt.icon
+                const isActive = view === opt.value
+                return (
+                  <Tooltip key={opt.value}>
+                    <TooltipTrigger
+                      render={
+                        <Button
+                          size="icon-xs"
+                          variant={isActive ? "secondary" : "ghost"}
+                          onClick={() => setView(opt.value)}
+                          aria-label={`Vista: ${opt.label}`}
+                          aria-pressed={isActive}
+                        />
+                      }
+                    >
+                      <Icon className="size-3.5" />
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom">{opt.label}</TooltipContent>
+                  </Tooltip>
+                )
+              })}
+            </TooltipProvider>
+          </div>
+        </div>
       </div>
 
       {filtered.length === 0 ? (
@@ -66,6 +106,10 @@ export function CatalogSearch({ resources }: { resources: ResourceWithProject[] 
             </EmptyDescription>
           </EmptyHeader>
         </Empty>
+      ) : view === "table" ? (
+        <ResourceTable resources={filtered} />
+      ) : view === "tree" ? (
+        <ResourceTree resources={filtered} />
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((r) => (
