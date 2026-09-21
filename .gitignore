@@ -7,6 +7,9 @@ __v0_jsx-dev-runtime.ts
 .vercel/
 
 # Environment variables
+# Solo se ignoran los *.local (específicos de cada máquina). Los .env y
+# .env.dev contienen únicamente URLs de servicios (sin secretos), por lo que
+# se versionan como configuración base.
 .env*.local
 
 # Common ignores

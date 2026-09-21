@@ -1,0 +1,11 @@
+steps:
+# Deploy container image to Cloud Run
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: gcloud
+  args: ['run', 'deploy', 'mado-gcp-dev-crn-sivain-uc1-master-website',
+         '--image', 'gcr.io/proy-ado-siva-indicadores-dev/master-website:latest', '--region', 'us-central1',
+         '--vpc-connector=projects/proy-sha-network/locations/us-central1/connectors/mado-sha-vpc-cn-sivain-01']
+# Reedirigir el tráfico a la ultima version
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: gcloud
+  args: ['run', 'services', 'update-traffic', 'mado-gcp-dev-crn-sivain-uc1-master-website', '--to-latest', '--region', 'us-central1']

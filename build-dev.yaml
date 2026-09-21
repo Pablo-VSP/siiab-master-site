@@ -1,0 +1,23 @@
+# =============================================================================
+# Cloud Build - BUILD (entorno DEV)
+#
+# Solo construye y publica la imagen. Esta app es Next.js (servidor Node), no
+# una SPA de Vite: las URLs de los backends se leen en RUNTIME
+# (GATEKEEPER_URL / KEYMASTER_URL) y se inyectan en el DEPLOY (deploy-dev.yaml),
+# no como --build-arg.
+#
+# NOTA: el campo "images" va en la RAÍZ del archivo, no dentro de un step.
+# =============================================================================
+
+steps:
+  # Build de la imagen.
+  - name: 'gcr.io/cloud-builders/docker'
+    id: build
+    args:
+      - build
+      - -t
+      - gcr.io/proy-ado-siva-indicadores-dev/master-website
+      - .
+
+images:
+  - 'gcr.io/proy-ado-siva-indicadores-dev/master-website'

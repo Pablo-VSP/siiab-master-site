@@ -2,3 +2,8 @@ allowBuilds:
   better-sqlite3: true
   core-js: false
   msw: false
+
+# Overrides: en pnpm 10+ ya no se leen desde el campo "pnpm" de package.json;
+# viven aquí. Fija hono a la versión resuelta en el lockfile.
+overrides:
+  hono: 4.12.25

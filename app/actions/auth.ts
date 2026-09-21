@@ -2,11 +2,11 @@
 
 import { redirect } from "next/navigation"
 import { z } from "zod"
-import { getStore } from "@/lib/data/store"
-import { createSession, destroySession, verifyPassword } from "@/lib/auth"
+import { createSessionFromToken, destroySession } from "@/lib/auth"
+import { authenticate } from "@/lib/services/gatekeeper"
 
 const loginSchema = z.object({
-  email: z.string().email("Correo invalido"),
+  username: z.string().min(1, "El usuario es obligatorio"),
   password: z.string().min(1, "La contraseña es obligatoria"),
 })
 
@@ -20,7 +20,7 @@ export async function loginAction(
   formData: FormData,
 ): Promise<LoginState> {
   const parsed = loginSchema.safeParse({
-    email: formData.get("email"),
+    username: formData.get("username"),
     password: formData.get("password"),
   })
 
@@ -28,12 +28,18 @@ export async function loginAction(
     return { error: parsed.error.issues[0]?.message ?? "Datos invalidos" }
   }
 
-  const user = await getStore().getUserByEmail(parsed.data.email)
-  if (!user || !verifyPassword(user, parsed.data.password)) {
-    return { error: "Credenciales incorrectas" }
+  // La autenticación la resuelve Gatekeeper; el JWT resultante se guarda en la
+  // cookie de sesión y luego se reenvía a Keymaster para pintar el menú.
+  const result = await authenticate({
+    username: parsed.data.username,
+    password: parsed.data.password,
+  })
+
+  if (!result.ok) {
+    return { error: result.error }
   }
 
-  await createSession(user)
+  await createSessionFromToken(result.token)
   redirect("/")
 }
 

@@ -1,0 +1,28 @@
+# No copiar dependencias ni artefactos locales al contexto de build.
+# El Dockerfile reinstala todo dentro de Alpine (better-sqlite3 se compila
+# para Linux). Copiar el node_modules de Windows rompería el runtime.
+node_modules
+.next
+dist
+
+# Secretos y config específica de máquina.
+.env*.local
+
+# Git y metadatos.
+.git
+.gitignore
+
+# Artefactos de TypeScript / logs.
+tsconfig.tsbuildinfo
+*.log
+npm-debug.log*
+
+# Base de datos SQLite local.
+portal.db
+portal.db-wal
+portal.db-shm
+
+# Documentación / archivos que no afectan el build.
+Dockerfile
+.dockerignore
+README*.md
