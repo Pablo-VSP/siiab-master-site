@@ -1,9 +1,8 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { requireUser } from "@/lib/auth"
-import { canAccessProject } from "@/lib/permissions"
-import { getStore } from "@/lib/data/store"
-import { ResourceCard, type ResourceWithProject } from "@/components/resource-card"
+import { getCatalogProject } from "@/lib/services/catalog"
+import { ResourceCard } from "@/components/resource-card"
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
 import { ArrowLeft, BarChart3, FolderX, Globe } from "lucide-react"
 
@@ -13,20 +12,16 @@ export default async function ProjectDetailPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const user = await requireUser()
-  const store = getStore()
+  await requireUser()
 
-  const project = await store.getProjectById(id)
-  if (!project) notFound()
-  if (!(await canAccessProject(user, id))) notFound()
+  // El proyecto y sus recursos provienen del menú autorizado de Keymaster. Si
+  // el proyecto no existe en el menú del usuario, no tiene acceso -> 404.
+  const found = await getCatalogProject(id)
+  if (!found) notFound()
 
-  const resources = await store.listResourcesByProject(id)
-  const enriched: ResourceWithProject[] = resources.map((r) => ({
-    ...r,
-    projectName: project.name,
-  }))
-  const reports = enriched.filter((r) => r.type === "report")
-  const sites = enriched.filter((r) => r.type === "site")
+  const { project, resources } = found
+  const reports = resources.filter((r) => r.type === "report")
+  const sites = resources.filter((r) => r.type === "site")
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-8">
@@ -39,14 +34,18 @@ export default async function ProjectDetailPage({
           Proyectos
         </Link>
         <header className="flex flex-col gap-1">
-          <h1 className="text-2xl font-semibold tracking-tight text-balance">{project.name}</h1>
-          <p className="max-w-2xl text-sm text-muted-foreground text-pretty">
-            {project.description}
-          </p>
+          <h1 className="font-display text-2xl font-semibold tracking-tight text-balance">
+            {project.name}
+          </h1>
+          {project.description ? (
+            <p className="max-w-2xl text-sm text-muted-foreground text-pretty">
+              {project.description}
+            </p>
+          ) : null}
         </header>
       </div>
 
-      {enriched.length === 0 ? (
+      {resources.length === 0 ? (
         <Empty className="rounded-lg border border-dashed border-border">
           <EmptyHeader>
             <EmptyMedia variant="icon">
@@ -61,8 +60,8 @@ export default async function ProjectDetailPage({
           {reports.length > 0 ? (
             <section className="flex flex-col gap-4">
               <div className="flex items-center gap-2">
-                <BarChart3 className="size-4 text-primary" />
-                <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                <BarChart3 className="size-4 text-accent" />
+                <h2 className="text-sm font-medium text-muted-foreground">
                   Reportes ({reports.length})
                 </h2>
               </div>
@@ -77,8 +76,8 @@ export default async function ProjectDetailPage({
           {sites.length > 0 ? (
             <section className="flex flex-col gap-4">
               <div className="flex items-center gap-2">
-                <Globe className="size-4 text-primary" />
-                <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                <Globe className="size-4 text-accent" />
+                <h2 className="text-sm font-medium text-muted-foreground">
                   Sitios web ({sites.length})
                 </h2>
               </div>

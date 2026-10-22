@@ -15,16 +15,12 @@
 FROM node:22-alpine AS deps
 WORKDIR /app
 
-# better-sqlite3 es un módulo nativo (node-gyp): en Alpine necesita toolchain
-# para compilarse durante la instalación.
-RUN apk add --no-cache python3 make g++
-
 # El proyecto usa pnpm. Se activa una versión concreta de forma determinista
 # (no depende de que exista un package.json en este punto del build).
 RUN corepack enable && corepack prepare pnpm@10.34.5 --activate
 
-# pnpm-workspace.yaml es necesario: ahí viven los overrides (hono) y allowBuilds
-# (better-sqlite3) que pnpm 10+ ya NO lee desde package.json.
+# pnpm-workspace.yaml es necesario: ahí viven los overrides (hono) que pnpm 10+
+# ya NO lee desde package.json.
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
 

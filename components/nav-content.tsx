@@ -46,14 +46,14 @@ export function NavContent({
 
   return (
     <div className="flex h-full flex-col gap-6 p-4">
-      <div className="flex items-center gap-2.5 px-2">
-        <div className="flex h-12 w-full items-center justify-start rounded-lg bg-white p-1.5">
+      <div className="flex items-center gap-2.5 px-2 pt-1">
+        <div className="flex h-11 items-center justify-start rounded-lg bg-white px-3">
           <Image
             src="/logos/Logos_SIIAB nuevo.png"
-            alt="SIIAB"
+            alt="SIIAB — Sistema Integral de Información Abordo"
             width={120}
             height={40}
-            className="h-9 w-auto object-contain"
+            className="h-7 w-auto object-contain"
           />
         </div>
       </div>
@@ -68,7 +68,7 @@ export function NavContent({
             const SectionIcon = section.icon
             return (
               <div key={section.key} className="flex flex-col gap-1">
-                <div className="flex items-center gap-2 px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-sidebar-foreground/50">
+                <div className="flex items-center gap-2 px-3 pb-1 text-xs font-medium text-sidebar-foreground/45">
                   <SectionIcon className="size-3.5 shrink-0" />
                   <span className="truncate">{section.label}</span>
                 </div>

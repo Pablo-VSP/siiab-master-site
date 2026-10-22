@@ -4,84 +4,88 @@
 
 Aplicación interna en **Next.js 16 (App Router)** que sirve como:
 
-1. **Catálogo central** de sitios web y reportes de Looker Studio, organizados por proyecto, con búsqueda.
-2. **Control de acceso** por roles + permisos granulares por proyecto (login con credenciales).
-3. **Módulo de vacaciones** con flujo de aprobación, exportación a PDF (cliente) y generación de correo editable (borrador + mailto).
+1. **Catálogo central** de sitios web y reportes de Looker Studio, organizados por proyecto, con búsqueda. El catálogo se deriva del menú autorizado de **Keymaster**.
+2. **Autenticación** vía **Gatekeeper** (JWT) y **autorización de navegación** vía **Keymaster** (menú por usuario).
+3. **Configuración** (admin): pantallas para gestionar menús, submenús, opciones, usuarios y la construcción del menú, consumiendo directamente el CRUD de Keymaster.
 
 ## Stack Tecnológico
 
 - **Framework**: Next.js 16 con App Router (React 19, Server Components por defecto)
 - **Estilos**: Tailwind CSS v4 + shadcn/ui (Base UI React)
 - **Validación**: Zod v4 (sin react-hook-form; formularios nativos + Server Actions)
-- **Auth**: JWT firmado con `jose`, cookie HttpOnly (`portal_session`)
-- **PDF**: jsPDF (generación en navegador)
+- **Auth**: JWT emitido por Gatekeeper, cookie HttpOnly (`portal_session`). La app NO firma tokens.
 - **Package Manager**: pnpm
 - **Lenguaje**: TypeScript estricto
 
 ## Arquitectura de Datos
 
-La app consume **siempre** `getStore()` desde `lib/data/store.ts`. Nunca se acopla a una implementación concreta.
+**No hay base de datos local.** La app no persiste datos propios: toda la información
+de identidad, menús, usuarios y permisos de navegación vive en los servicios externos
+**Gatekeeper** (emisor de tokens) y **Keymaster** (menús y catálogo CRUD).
 
-- `lib/data/store.ts` — interfaz `DataStore` con métodos CRUD.
-- `lib/data/memory-store.ts` — implementación activa (datos seed en memoria).
-- `lib/data/bigquery-store.ts` — stub documentado para migración futura.
-- `lib/data/schema.sql` — esquema DDL pensado para BigQuery.
-- `lib/data/types.ts` — tipos de dominio compartidos.
+- `lib/services/gatekeeper.ts` — autenticación (`POST /identity` → JWT).
+- `lib/services/keymaster.ts` — menú autorizado y agrupado del usuario (pintar navegación).
+- `lib/services/keymaster-crud.ts` — cliente genérico CRUD de los 6 recursos de Keymaster.
+- `lib/services/menu-admin-data.ts` — lectores server-side para las pantallas de Configuración.
+- `lib/services/catalog.ts` — deriva el catálogo (proyectos/recursos) del menú de Keymaster.
+- `lib/data/types.ts` — tipos de dominio compartidos (User, Resource).
 
-Los datos se reinician con cada reinicio del servidor. El singleton se guarda en `globalThis` para sobrevivir al hot-reload de Next en desarrollo.
+El usuario de dominio se deriva del JWT (sin I/O). El rol se toma de los claims si existen;
+si no, por defecto `employee`. La autorización real de navegación la impone Keymaster.
 
-## Roles y Permisos
+## Recursos de Keymaster (contrato)
 
-| Rol | Capacidad |
-|-----|-----------|
-| `admin` | Gestiona usuarios, roles, proyectos, recursos y permisos. Ve todo. |
-| `approver` | Ve bandeja de aprobaciones, aprueba/rechaza solicitudes de vacaciones. |
-| `employee` | Ve solo proyectos asignados y crea solicitudes de vacaciones. |
+| Recurso | Ruta | Token | Pantalla de Configuración |
+|---|---|---|---|
+| menu_perfil | `/api/menus` | No | Menús |
+| menu_menu | `/api/menumenu` | No | Submenús |
+| menu_option | `/api/menuoption` | No | Opciones de Menú |
+| user | `/api/securityuser` | No | Usuarios |
+| menu_perfil_user | `/api/menuuser` | **Sí** | Menú por Usuario / Perfiles del usuario |
+| menu_build | `/api/menubuild` | **Sí** | Construcción del menú |
 
-El acceso a proyectos es granular vía `project_permissions` (view \| manage). Los admins tienen acceso implícito a todo.
+Los recursos protegidos reenvían el JWT (`Authorization: Bearer <token>`).
 
-## Usuarios Seed (Demo)
+## Roles
 
-| Email | Contraseña | Rol |
-|-------|-----------|-----|
-| admin@portal.com | admin123 | admin |
-| encargado@portal.com | encargado123 | approver |
-| empleado@portal.com | empleado123 | employee |
+El rol (`admin`/`approver`/`employee`) solo existe si el token lo declara en sus claims.
+`requireRole(...)` exige sesión válida y, si el token trae un rol explícito que no está
+permitido, redirige al inicio. La fuente de verdad del acceso es el menú de Keymaster.
 
 ## Estructura de Rutas
 
 ```
 app/
-├── login/page.tsx                  — Formulario de acceso
+├── login/page.tsx                  — Formulario de acceso (Gatekeeper)
 ├── (app)/
-│   ├── layout.tsx                  — Layout con sidebar + guard de sesión
+│   ├── layout.tsx                  — Layout con sidebar (menú de Keymaster) + guard
 │   ├── page.tsx                    — Dashboard: búsqueda global de recursos
 │   ├── projects/
-│   │   ├── page.tsx                — Lista de proyectos (filtrada por permisos)
-│   │   └── [id]/page.tsx           — Recursos del proyecto (reportes + sitios)
-│   ├── vacations/
-│   │   ├── page.tsx                — Mis solicitudes + botón "Nueva solicitud"
-│   │   ├── new/page.tsx            — Formulario de nueva solicitud
-│   │   ├── [id]/page.tsx           — Detalle: estado, PDF, correo, aprobar/rechazar
-│   │   └── inbox/page.tsx          — Bandeja de aprobación (solo approver/admin)
+│   │   ├── page.tsx                — Lista de proyectos (del catálogo de Keymaster)
+│   │   └── [id]/page.tsx           — Recursos del proyecto
 │   └── admin/
-│       ├── page.tsx                — Panel principal de administración
-│       ├── users/page.tsx          — Gestión de usuarios
-│       ├── projects/page.tsx       — Gestión de proyectos y recursos
-│       └── permissions/page.tsx    — Asignación de permisos por proyecto
+│       ├── page.tsx                — Redirige a /admin/configuracion
+│       └── configuracion/
+│           ├── page.tsx            — Índice de Configuración
+│           ├── menus/page.tsx      — menu_perfil
+│           ├── submenus/page.tsx   — menu_menu
+│           ├── opciones/page.tsx   — menu_option
+│           ├── usuarios/page.tsx   — securityuser (+ perfiles del usuario)
+│           ├── menu-usuario/page.tsx — menu_perfil_user
+│           └── menu-build/page.tsx — menu_build (3 columnas)
 ```
+
+Componentes de estas pantallas en `components/config/`.
 
 ## Dependencias Clave
 
-- `jose` — Firma y verificación de JWT para sesiones
-- `jspdf` — Generación de PDF de solicitudes de vacaciones en el navegador
-- `zod` — Validación de formularios (esquemas compartidos cliente/servidor)
+- `jose` — Decodificación del JWT de Gatekeeper para la sesión
+- `zod` — Validación de formularios
 - `lucide-react` — Iconos
 - `shadcn` (Base UI + CVA + tailwind-merge) — Sistema de componentes
 
 ## Fuera de Alcance (por ahora)
 
-- Conexión real a BigQuery (solo esquema + stub documentado).
-- Envío de correo vía servidor (se usa `mailto:`).
-- Firma electrónica dentro del PDF (se dejan espacios para firma manual).
-- `react-hook-form` / `@hookform/resolvers` (no está instalado; se usan formularios nativos con Server Actions).
+- **Vacaciones**: el módulo anterior se retiró; se reconstruirá consumiendo Keymaster.
+- Persistencia local (no hay base de datos; todo vive en Gatekeeper/Keymaster).
+- `react-hook-form` / `@hookform/resolvers` (se usan formularios nativos con Server Actions).

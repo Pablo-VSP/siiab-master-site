@@ -25,15 +25,15 @@ export function ResourceCard({
 
   return (
     <>
-      <Card className="flex h-full flex-col">
+      <Card className="flex h-full flex-col transition-colors hover:border-accent">
         <CardHeader>
           <div className="flex items-start justify-between gap-3">
             <div
               className={
                 "flex size-9 shrink-0 items-center justify-center rounded-md " +
                 (isReport
-                  ? "bg-primary/10 text-primary"
-                  : "bg-accent text-accent-foreground")
+                  ? "bg-accent/25 text-accent-foreground"
+                  : "bg-secondary text-muted-foreground")
               }
             >
               {isReport ? <BarChart3 className="size-5" /> : <Globe className="size-5" />}
@@ -42,7 +42,7 @@ export function ResourceCard({
               {isReport ? "Reporte" : "Sitio web"}
             </Badge>
           </div>
-          <CardTitle className="text-base leading-snug text-balance">
+          <CardTitle className="font-display text-base leading-snug text-balance">
             {resource.title}
           </CardTitle>
         </CardHeader>
@@ -51,7 +51,7 @@ export function ResourceCard({
           {showProject ? (
             <Link
               href={`/projects/${resource.projectId}`}
-              className="mt-3 inline-flex text-xs font-medium text-primary hover:underline"
+              className="mt-3 inline-flex text-xs font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
             >
               {resource.projectName}
             </Link>
@@ -59,7 +59,7 @@ export function ResourceCard({
         </CardContent>
         <CardFooter>
           {isReport ? (
-            <Button className="w-full" onClick={() => setOpen(true)}>
+            <Button variant="accent" className="w-full" onClick={() => setOpen(true)}>
               <Maximize2 data-icon="inline-start" />
               Ver reporte
             </Button>

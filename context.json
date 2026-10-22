@@ -1,0 +1,234 @@
+{
+    "data": {
+        "menu_menu": [
+            {
+                "pk_id": 1,
+                "name": "Inicio",
+                "active": 1,
+                "icon_name": "home",
+                "menu_options": [
+                    {
+                        "pk_id": 1,
+                        "name": "Dashboard",
+                        "description": "Índice central de sitios y reportes",
+                        "url": "/",
+                        "command": "Link",
+                        "img": null,
+                        "img_small": null,
+                        "active": 1,
+                        "icon_name": "dashboard",
+                        "external_url": null
+                    }
+                ]
+            },
+            {
+                "pk_id": 2,
+                "name": "Proyectos",
+                "active": 1,
+                "icon_name": "projects",
+                "menu_options": [
+                    {
+                        "pk_id": 2,
+                        "name": "Proyectos",
+                        "description": "Catálogo de proyectos",
+                        "url": "/projects",
+                        "command": "Link",
+                        "img": null,
+                        "img_small": null,
+                        "active": 1,
+                        "icon_name": "projects",
+                        "external_url": null
+                    }
+                ]
+            },
+            {
+                "pk_id": 3,
+                "name": "Vacaciones",
+                "active": 1,
+                "icon_name": "calendar",
+                "menu_options": [
+                    {
+                        "pk_id": 3,
+                        "name": "Mis solicitudes",
+                        "description": "Mis solicitudes de vacaciones",
+                        "url": "/vacations",
+                        "command": "Link",
+                        "img": null,
+                        "img_small": null,
+                        "active": 1,
+                        "icon_name": "calendar",
+                        "external_url": null
+                    },
+                    {
+                        "pk_id": 4,
+                        "name": "Nueva solicitud",
+                        "description": "Crear una nueva solicitud",
+                        "url": "/vacations/new",
+                        "command": "Link",
+                        "img": null,
+                        "img_small": null,
+                        "active": 1,
+                        "icon_name": "calendar",
+                        "external_url": null
+                    }
+                ]
+            },
+            {
+                "pk_id": 4,
+                "name": "Aprobaciones",
+                "active": 1,
+                "icon_name": "inbox",
+                "menu_options": [
+                    {
+                        "pk_id": 5,
+                        "name": "Bandeja de aprobación",
+                        "description": "Solicitudes por aprobar",
+                        "url": "/vacations/inbox",
+                        "command": "Link",
+                        "img": null,
+                        "img_small": null,
+                        "active": 1,
+                        "icon_name": "inbox",
+                        "external_url": null
+                    }
+                ]
+            },
+            {
+                "pk_id": 5,
+                "name": "Administración",
+                "active": 1,
+                "icon_name": "settings",
+                "menu_options": [
+                    {
+                        "pk_id": 6,
+                        "name": "Panel de administración",
+                        "description": "Panel principal",
+                        "url": "/admin",
+                        "command": "Link",
+                        "img": null,
+                        "img_small": null,
+                        "active": 1,
+                        "icon_name": "settings",
+                        "external_url": null
+                    },
+                    {
+                        "pk_id": 7,
+                        "name": "Usuarios",
+                        "description": "Gestión de usuarios",
+                        "url": "/admin/users",
+                        "command": "Link",
+                        "img": null,
+                        "img_small": null,
+                        "active": 1,
+                        "icon_name": "users",
+                        "external_url": null
+                    },
+                    {
+                        "pk_id": 8,
+                        "name": "Proyectos y recursos",
+                        "description": "Gestión de proyectos y recursos",
+                        "url": "/admin/projects",
+                        "command": "Link",
+                        "img": null,
+                        "img_small": null,
+                        "active": 1,
+                        "icon_name": "projects",
+                        "external_url": null
+                    },
+                    {
+                        "pk_id": 9,
+                        "name": "Permisos",
+                        "description": "Asignación de permisos por proyecto",
+                        "url": "/admin/permissions",
+                        "command": "Link",
+                        "img": null,
+                        "img_small": null,
+                        "active": 1,
+                        "icon_name": "settings",
+                        "external_url": null
+                    }
+                ]
+            },
+            {
+                "pk_id": 6,
+                "name": "Reportes",
+                "active": 1,
+                "icon_name": "chart",
+                "menu_options": [
+                    {
+                        "pk_id": 10,
+                        "name": "Gasto MB Starlink",
+                        "description": "Gasto de envío de información Telemetría y TuViajeADO",
+                        "url": null,
+                        "command": "Link",
+                        "img": null,
+                        "img_small": null,
+                        "active": 1,
+                        "icon_name": "report",
+                        "external_url": "https://datastudio.google.com/embed/reporting/bed2a1d5-6a8b-432c-8418-8c5af64617e2/page/p_r8lkddeg6d"
+                    },
+                    {
+                        "pk_id": 11,
+                        "name": "Monitoreo Viajes Telemetría",
+                        "description": "Monitoreo de viajes de Telemetría y TuViajeADO",
+                        "url": null,
+                        "command": "Link",
+                        "img": null,
+                        "img_small": null,
+                        "active": 1,
+                        "icon_name": "report",
+                        "external_url": "https://datastudio.google.com/embed/reporting/a7365a4e-7a2d-4667-98f4-ffb993848dec/page/qlD"
+                    }
+                ]
+            },
+            {
+                "pk_id": 7,
+                "name": "Sitios",
+                "active": 1,
+                "icon_name": "globe",
+                "menu_options": [
+                    {
+                        "pk_id": 12,
+                        "name": "MyTools",
+                        "description": "Sitio de MyTools Productivo",
+                        "url": null,
+                        "command": "Link",
+                        "img": null,
+                        "img_small": null,
+                        "active": 1,
+                        "icon_name": "site",
+                        "external_url": "https://mytools.siiab.app/login"
+                    },
+                    {
+                        "pk_id": 13,
+                        "name": "SIT",
+                        "description": "Sitio de SIT Productivo",
+                        "url": null,
+                        "command": "Link",
+                        "img": null,
+                        "img_small": null,
+                        "active": 1,
+                        "icon_name": "site",
+                        "external_url": "http://sitv3.ado.net/"
+                    },
+                    {
+                        "pk_id": 14,
+                        "name": "Telemetría",
+                        "description": "Sitio de Telemetría Productivo",
+                        "url": null,
+                        "command": "Link",
+                        "img": null,
+                        "img_small": null,
+                        "active": 1,
+                        "icon_name": "site",
+                        "external_url": "https://telemetriat2.siiab.dev/Account/Login?ReturnUrl=%2F"
+                    }
+                ]
+            }
+        ]
+    },
+    "summoner": {
+        "nombre": "Gabo",
+        "apellido": "Calderon"
+    }
+}

@@ -386,3 +386,484 @@ async function cargarMenu(jwt, menuId /* opcional */) {
 - Alternativa plana con paginación/orden: `GET /api/menubuild/authorized`.
 - CRUD de administración disponible por recurso (sección 6).
 - Errores de token → `401`; reautenticar con Gatekeeper.
+
+---
+
+## 9. CRUD detallado por recurso (Read / Create / Patch / Delete)
+
+Esta sección especifica, para **cada uno de los 6 APIs**, los cuatro métodos que el
+frontend usará de forma estándar:
+
+- **Read** → traer registros (fetch) para listar / rellenar formularios.
+- **Create** → dar de alta nuevos registros.
+- **Patch** → actualizar campos de registros existentes.
+- **Delete** → borrar registros.
+
+Todos los recursos comparten el **mismo contrato de métodos**; solo cambian la ruta
+base (`url_prefix`), los campos de la entidad y si exigen token.
+
+### 9.0 Convenciones comunes a los 6 recursos
+
+| Operación  | Método HTTP | Ruta                         | Body de la petición                                   | Código éxito |
+|------------|-------------|------------------------------|-------------------------------------------------------|--------------|
+| **Read** (listar/filtrar) | `GET`    | `/<recurso>`         | *Sin body.* Filtros y paginación por **query params**. | `200`        |
+| **Read** (por PKs)        | `POST`   | `/<recurso>/read`    | **Array de PKs**: `[1, 2, 3]`                          | `200`        |
+| **Create**                | `POST`   | `/<recurso>`         | **Array de objetos** (sin `pk_id`, o con `pk_id` nulo).| `200`        |
+| **Patch** (actualizar)    | `PATCH`  | `/<recurso>`         | **Array de objetos**, cada uno con `pk_id` + campos a cambiar. | `202`  |
+| **Delete**                | `DELETE` | `/<recurso>`         | **Array de PKs**: `[1, 2, 3]`                          | `202`        |
+
+> **Reglas importantes**
+> - Create, Patch y Delete **siempre reciben un array**, aunque sea un solo registro.
+> - En **Create/Patch** el `Content-Type` debe ser `application/json`.
+> - En **Read** por `GET`, **no** mandes body ni `Content-Type: application/json`
+>   (el backend decide entre modo "query params" y modo "array de PKs" según si
+>   llega o no un body JSON).
+> - La respuesta de **Create / Patch / Delete** tiene la forma
+>   `{ "data": [ ...registros afectados... ] }` y, si hubo fallas parciales,
+>   agrega `"errors": [ ... ]` con `STATUS = PARTIALLY_APPLIED` (header `CODE = 200`).
+> - La respuesta de **Read** por `GET` tiene la forma
+>   `{ "data": [...], "pagination": {...} }`.
+
+**Query params de Read (`GET /<recurso>`)**
+
+| Param           | Descripción                                                                   |
+|-----------------|-------------------------------------------------------------------------------|
+| `pk_id`         | Devuelve un único registro por su llave primaria.                             |
+| `page_size`     | Tamaño de página (default `100`; `0` = sin paginar, trae todo).               |
+| `page_number`   | Número de página (default `1`).                                               |
+| `columns_order` | Columnas de ordenación separadas por coma (p. ej. `name,active`).             |
+| `columns_sort`  | `asc`/`desc` por columna, misma cantidad que `columns_order`.                 |
+| `<campo>`       | Filtro por campo de la entidad; texto usa coincidencia tipo `ILIKE`. Usa `null` para filtrar por nulos. |
+| `add_<rel>`     | Flags para incrustar relaciones (ver campos de cada recurso).                 |
+
+**Códigos de respuesta por operación**
+
+| Situación                               | HTTP | Header `STATUS`       |
+|-----------------------------------------|------|-----------------------|
+| Todo correcto                           | `200` (read/create) / `202` (patch/delete) | `OK` |
+| Aplicado parcialmente (algunos errores) | `200` | `PARTIALLY_APPLIED`  |
+| Nada aplicado / conflicto               | `409` | `NOT_OK`             |
+| Body ausente o con formato inválido     | `400` | `NOT_OK`             |
+| Token ausente/ inválido (solo recursos protegidos) | `401` | —          |
+
+---
+
+### 9.1 `menu_perfil` — `GET/POST/PATCH/DELETE /api/menus`
+
+- **Token:** No requerido.
+- **Campos:** `pk_id`, `name`, `active`
+- **Relaciones incrustables en Read:** `add_menu_builds`, `add_menu_users`
+
+**Read (listar)**
+```
+GET /api/menus?active=1&page_size=50&page_number=1&columns_order=name&columns_sort=asc
+```
+```js
+const res = await fetch(`${BASE_URL}/api/menus?page_size=50`, { method: 'GET' });
+const { data, pagination } = await res.json();
+```
+
+**Read (por PKs)**
+```js
+await fetch(`${BASE_URL}/api/menus/read`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify([1, 2, 3]),
+});
+```
+
+**Create**
+```js
+await fetch(`${BASE_URL}/api/menus`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify([
+    { name: 'Perfil Admin', active: 1 }
+  ]),
+});
+```
+
+**Patch**
+```js
+await fetch(`${BASE_URL}/api/menus`, {
+  method: 'PATCH',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify([
+    { pk_id: 3, name: 'Perfil Administrador', active: 0 }
+  ]),
+});
+```
+
+**Delete**
+```js
+await fetch(`${BASE_URL}/api/menus`, {
+  method: 'DELETE',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify([3]),
+});
+```
+
+---
+
+### 9.2 `menu_menu` — `GET/POST/PATCH/DELETE /api/menumenu`
+
+- **Token:** No requerido.
+- **Campos:** `pk_id`, `name`, `active`, `icon_name`
+- **Relaciones incrustables en Read:** `add_menu_builds`
+
+**Read (listar)**
+```js
+const res = await fetch(`${BASE_URL}/api/menumenu?page_size=0`, { method: 'GET' });
+const { data } = await res.json();
+```
+
+**Create**
+```js
+await fetch(`${BASE_URL}/api/menumenu`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify([
+    { name: 'Administración', active: 1, icon_name: 'settings' }
+  ]),
+});
+```
+
+**Patch**
+```js
+await fetch(`${BASE_URL}/api/menumenu`, {
+  method: 'PATCH',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify([
+    { pk_id: 1, icon_name: 'cog' }
+  ]),
+});
+```
+
+**Delete**
+```js
+await fetch(`${BASE_URL}/api/menumenu`, {
+  method: 'DELETE',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify([1]),
+});
+```
+
+---
+
+### 9.3 `menu_option` — `GET/POST/PATCH/DELETE /api/menuoption`
+
+- **Token:** No requerido.
+- **Campos:** `pk_id`, `name`, `description`, `url`, `command`, `img`, `img_small`,
+  `active`, `icon_name`, `external_url`
+- **Relaciones incrustables en Read:** `add_menu_builds`
+
+**Read (listar)**
+```js
+const res = await fetch(`${BASE_URL}/api/menuoption?active=1`, { method: 'GET' });
+const { data } = await res.json();
+```
+
+**Create**
+```js
+await fetch(`${BASE_URL}/api/menuoption`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify([
+    {
+      name: 'Usuarios',
+      description: 'Gestión de usuarios',
+      url: '/usuarios',
+      icon_name: 'users',
+      active: 1,
+      external_url: null
+    }
+  ]),
+});
+```
+
+**Patch**
+```js
+await fetch(`${BASE_URL}/api/menuoption`, {
+  method: 'PATCH',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify([
+    { pk_id: 10, url: '/admin/usuarios', icon_name: 'user-cog' }
+  ]),
+});
+```
+
+**Delete**
+```js
+await fetch(`${BASE_URL}/api/menuoption`, {
+  method: 'DELETE',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify([10]),
+});
+```
+
+---
+
+### 9.4 `user` — `GET/POST/PATCH/DELETE /api/securityuser`
+
+- **Token:** No requerido.
+- **Campos:** `pk_id`, `login`, `password`, `name`, `last_name`, `email`,
+  `cell_phone`, `active`
+- **Relaciones incrustables en Read:** `add_menu_users`
+- **Nota de seguridad:** al **crear** o **actualizar**, si envías `password` el
+  servicio lo **hashea** (SHA-256) junto con el `login` antes de guardarlo. El hash
+  nunca se devuelve en texto plano ni se expone en el token. Para que el hash sea
+  correcto, en Create envía siempre `login` + `password` juntos.
+
+**Read (listar)**
+```js
+const res = await fetch(`${BASE_URL}/api/securityuser?login=jdoe`, { method: 'GET' });
+const { data } = await res.json();
+```
+
+**Create**
+```js
+await fetch(`${BASE_URL}/api/securityuser`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify([
+    {
+      login: 'jdoe',
+      password: 'secreto123',
+      name: 'John',
+      last_name: 'Doe',
+      email: 'jdoe@dominio.com',
+      cell_phone: '5555555',
+      active: 1
+    }
+  ]),
+});
+```
+
+**Patch**
+```js
+await fetch(`${BASE_URL}/api/securityuser`, {
+  method: 'PATCH',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify([
+    { pk_id: 5, email: 'nuevo@dominio.com', active: 0 }
+  ]),
+});
+```
+> Para cambiar contraseña en Patch, envía `password` (y preferentemente `login`)
+> en el mismo objeto; el backend re-hashea.
+
+**Delete**
+```js
+await fetch(`${BASE_URL}/api/securityuser`, {
+  method: 'DELETE',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify([5]),
+});
+```
+
+---
+
+### 9.5 `menu_build` — `GET/POST/PATCH/DELETE /api/menubuild`  *(requiere token)*
+
+- **Token:** **Sí**. Envía `Authorization: Bearer <jwt>` en **todas** las llamadas.
+- **Campos:** `pk_id`, `menu_id`, `menu_menu_id`, `menu_option_id`, `sequence`,
+  `active`, `menu_sequence`
+- **Relaciones incrustables en Read:** `add_menu_menu`, `add_menu_option`, `add_menus`
+- **Recordatorio:** para *pintar* el menú usa los endpoints
+  `GET /api/menubuild/authorized-grouped` o `GET /api/menubuild/authorized`
+  (secciones 4 y 5). El CRUD de abajo es para **administrar** la construcción del menú.
+
+**Read (listar)**
+```js
+const res = await fetch(`${BASE_URL}/api/menubuild?menu_id=3&add_menu_option=1`, {
+  method: 'GET',
+  headers: { Authorization: `Bearer ${jwt}` },
+});
+const { data, pagination } = await res.json();
+```
+
+**Create**
+```js
+await fetch(`${BASE_URL}/api/menubuild`, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${jwt}`,
+  },
+  body: JSON.stringify([
+    {
+      menu_id: 3,
+      menu_menu_id: 1,
+      menu_option_id: 10,
+      sequence: 1,
+      menu_sequence: 1,
+      active: 1
+    }
+  ]),
+});
+```
+
+**Patch**
+```js
+await fetch(`${BASE_URL}/api/menubuild`, {
+  method: 'PATCH',
+  headers: {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${jwt}`,
+  },
+  body: JSON.stringify([
+    { pk_id: 100, sequence: 2, active: 0 }
+  ]),
+});
+```
+
+**Delete**
+```js
+await fetch(`${BASE_URL}/api/menubuild`, {
+  method: 'DELETE',
+  headers: {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${jwt}`,
+  },
+  body: JSON.stringify([100]),
+});
+```
+
+---
+
+### 9.6 `menu_perfil_user` — `GET/POST/PATCH/DELETE /api/menuuser`  *(requiere token)*
+
+- **Token:** **Sí**. Envía `Authorization: Bearer <jwt>` en **todas** las llamadas.
+- **Campos:** `pk_id`, `security_user_id`, `menu_id`, `active`
+- **Relaciones incrustables en Read:** `add_menus`, `add_security_user`
+- **Qué representa:** la asignación de perfiles de menú (`menu_id`) a usuarios
+  (`security_user_id`). Es lo que determina qué menús ve cada usuario.
+
+**Read (listar)**
+```js
+const res = await fetch(`${BASE_URL}/api/menuuser?security_user_id=5&add_menus=1`, {
+  method: 'GET',
+  headers: { Authorization: `Bearer ${jwt}` },
+});
+const { data } = await res.json();
+```
+
+**Create**
+```js
+await fetch(`${BASE_URL}/api/menuuser`, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${jwt}`,
+  },
+  body: JSON.stringify([
+    { security_user_id: 5, menu_id: 3, active: 1 }
+  ]),
+});
+```
+
+**Patch**
+```js
+await fetch(`${BASE_URL}/api/menuuser`, {
+  method: 'PATCH',
+  headers: {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${jwt}`,
+  },
+  body: JSON.stringify([
+    { pk_id: 42, active: 0 }
+  ]),
+});
+```
+
+**Delete**
+```js
+await fetch(`${BASE_URL}/api/menuuser`, {
+  method: 'DELETE',
+  headers: {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${jwt}`,
+  },
+  body: JSON.stringify([42]),
+});
+```
+
+---
+
+### 9.7 Helper genérico sugerido para el frontend
+
+Como los 6 recursos comparten contrato, puedes centralizar las 4 operaciones en un
+único cliente:
+
+```js
+function crearClienteRecurso(base, { requiereToken = false } = {}) {
+  const auth = (jwt) =>
+    requiereToken ? { Authorization: `Bearer ${jwt}` } : {};
+
+  return {
+    // Read: listar/filtrar por query params
+    read: (params = {}, jwt) => {
+      const qs = new URLSearchParams(params).toString();
+      return fetch(`${BASE_URL}${base}${qs ? `?${qs}` : ''}`, {
+        method: 'GET',
+        headers: { ...auth(jwt) },
+      }).then((r) => r.json());
+    },
+    // Read: por array de PKs
+    readByIds: (ids, jwt) =>
+      fetch(`${BASE_URL}${base}/read`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...auth(jwt) },
+        body: JSON.stringify(ids),
+      }).then((r) => r.json()),
+    // Create: array de objetos
+    create: (items, jwt) =>
+      fetch(`${BASE_URL}${base}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...auth(jwt) },
+        body: JSON.stringify(items),
+      }).then((r) => r.json()),
+    // Patch: array de objetos con pk_id + campos
+    patch: (items, jwt) =>
+      fetch(`${BASE_URL}${base}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', ...auth(jwt) },
+        body: JSON.stringify(items),
+      }).then((r) => r.json()),
+    // Delete: array de PKs
+    remove: (ids, jwt) =>
+      fetch(`${BASE_URL}${base}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json', ...auth(jwt) },
+        body: JSON.stringify(ids),
+      }).then((r) => r.json()),
+  };
+}
+
+// Ejemplos de instanciación:
+const apiMenus       = crearClienteRecurso('/api/menus');
+const apiMenuMenu    = crearClienteRecurso('/api/menumenu');
+const apiMenuOption  = crearClienteRecurso('/api/menuoption');
+const apiUser        = crearClienteRecurso('/api/securityuser');
+const apiMenuBuild   = crearClienteRecurso('/api/menubuild', { requiereToken: true });
+const apiMenuUser    = crearClienteRecurso('/api/menuuser',  { requiereToken: true });
+```
+
+---
+
+## 10. Resumen de los 6 APIs y sus métodos
+
+| Recurso            | Ruta base             | Read                         | Create            | Patch             | Delete            | Token |
+|--------------------|-----------------------|------------------------------|-------------------|-------------------|-------------------|:-----:|
+| menu_perfil        | `/api/menus`          | `GET` · `POST /read`         | `POST`            | `PATCH`           | `DELETE`          | No    |
+| menu_menu          | `/api/menumenu`       | `GET` · `POST /read`         | `POST`            | `PATCH`           | `DELETE`          | No    |
+| menu_option        | `/api/menuoption`     | `GET` · `POST /read`         | `POST`            | `PATCH`           | `DELETE`          | No    |
+| user               | `/api/securityuser`   | `GET` · `POST /read`         | `POST`            | `PATCH`           | `DELETE`          | No    |
+| menu_build         | `/api/menubuild`      | `GET` · `POST /read`         | `POST`            | `PATCH`           | `DELETE`          | **Sí**|
+| menu_perfil_user   | `/api/menuuser`       | `GET` · `POST /read`         | `POST`            | `PATCH`           | `DELETE`          | **Sí**|
+
+- **Read** = `GET /<recurso>` (query params) o `POST /<recurso>/read` (array de PKs).
+- **Create** = `POST /<recurso>` con **array de objetos**.
+- **Patch** = `PATCH /<recurso>` con **array de objetos** (`pk_id` + campos a cambiar).
+- **Delete** = `DELETE /<recurso>` con **array de PKs**.
+- `menu_build` y `menu_perfil_user` exigen `Authorization: Bearer <jwt>`.

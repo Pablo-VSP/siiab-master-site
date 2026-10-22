@@ -27,26 +27,30 @@
 
 ## Data Layer
 
-- **Nunca importar `MemoryStore` directamente**. Siempre consumir `getStore()` desde `lib/data/store.ts`.
-- Las funciones del store son `async` (preparadas para I/O real). Siempre usar `await`.
-- Nuevos métodos deben agregarse primero a la interfaz `DataStore`, luego implementar en `MemoryStore` y documentar en `BigQueryStore`.
+- **No hay base de datos local.** Toda la persistencia vive en Keymaster/Gatekeeper.
+- Para consumir Keymaster usa el cliente genérico `lib/services/keymaster-crud.ts`
+  (`readResource` / `createResource` / `patchResource` / `deleteResource`).
+- Los recursos protegidos (`menu_build`, `menu_perfil_user`) requieren reenviar el
+  token: obtenlo con `getToken()` y pásalo al cliente.
+- Create/Patch reciben **array de objetos**; Delete recibe **array de PKs**.
 
 ## Auth y Permisos
 
-- `requireUser()` — redirige a `/login` si no hay sesión.
-- `requireRole(...roles)` — redirige a `/` si el rol no coincide.
-- `canAccessProject(user, projectId)` — verifica permiso granular.
-- `canApproveVacations(user)` — true para admin y approver.
-- **Siempre** verificar permisos en Server Actions y en Server Components que renderizan datos sensibles.
+- `requireUser()` — redirige a `/login` si no hay sesión (deriva el usuario del JWT, sin DB).
+- `requireRole(...roles)` — exige sesión válida; redirige a `/` solo si el token trae un rol explícito no permitido.
+- `canApproveVacations(user)` / `isAdmin(user)` — utilidades de rol puras.
+- **Siempre** verificar la sesión en Server Actions; la autorización fina la impone Keymaster.
 
 ## Estructura de Archivos
 
 ```
 app/actions/         — Server Actions agrupadas por dominio
-lib/                 — Lógica de negocio, utilidades, data layer
-lib/data/            — DataStore interface + implementaciones
+lib/                 — Lógica de negocio, utilidades
+lib/services/        — Clientes de Gatekeeper/Keymaster
+lib/data/types.ts    — Tipos de dominio (sin persistencia)
 lib/validation/      — Esquemas Zod compartidos
 components/          — Componentes de la app (no pages)
+components/config/   — Pantallas de Configuración (gestión de menús vía Keymaster)
 components/ui/       — Primitivos de shadcn/ui (no modificar directamente salvo necesidad)
 ```
 
@@ -55,12 +59,6 @@ components/ui/       — Primitivos de shadcn/ui (no modificar directamente salv
 - Server Actions devuelven `{ ok: boolean; error?: string }`. El cliente muestra el error con toast (sonner) o inline.
 - No lanzar excepciones en actions salvo errores inesperados del sistema.
 - Usar `notFound()` de next/navigation cuando un recurso no existe.
-
-## PDF y Email
-
-- `lib/pdf.ts` — Generación con jsPDF, se ejecuta solo en el navegador (`"use client"`).
-- `lib/vacation-format.ts` — Utilidades de formato (fechas, labels, draft de email, mailto URL). Puede usarse en cliente y servidor.
-- El correo usa `mailto:` con body pre-llenado. No hay servicio de envío backend.
 
 ## Git
 

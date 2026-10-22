@@ -5,6 +5,7 @@
 @theme inline {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-display), var(--font-geist-sans);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -47,40 +48,59 @@
 
 :root {
   color-scheme: light;
-  /* Professional neutral gray palette with slate-blue accents */
-  --background: oklch(0.965 0.001 250);
-  --foreground: oklch(0.2 0.015 250);
-  --card: oklch(0.995 0 0);
-  --card-foreground: oklch(0.2 0.015 250);
-  --popover: oklch(0.995 0 0);
-  --popover-foreground: oklch(0.2 0.015 250);
-  --primary: oklch(0.35 0.05 250);
-  --primary-foreground: oklch(0.98 0 0);
-  --secondary: oklch(0.945 0.005 250);
-  --secondary-foreground: oklch(0.3 0.02 250);
-  --muted: oklch(0.95 0.003 250);
-  --muted-foreground: oklch(0.5 0.01 250);
-  --accent: oklch(0.93 0.008 250);
-  --accent-foreground: oklch(0.3 0.03 250);
-  --destructive: oklch(0.55 0.22 25);
-  --border: oklch(0.9 0.005 250);
-  --input: oklch(0.9 0.005 250);
-  --ring: oklch(0.35 0.05 250);
-  --chart-1: oklch(0.45 0.08 250);
-  --chart-2: oklch(0.55 0.07 220);
-  --chart-3: oklch(0.6 0.06 190);
-  --chart-4: oklch(0.55 0.08 160);
-  --chart-5: oklch(0.6 0.06 130);
-  --radius: 0.5rem;
-  /* Sidebar: dark charcoal-gray, professional */
-  --sidebar: oklch(0.22 0.01 250);
-  --sidebar-foreground: oklch(0.88 0.005 250);
-  --sidebar-primary: oklch(0.7 0.04 250);
-  --sidebar-primary-foreground: oklch(0.99 0 0);
-  --sidebar-accent: oklch(0.3 0.015 250);
-  --sidebar-accent-foreground: oklch(0.95 0 0);
-  --sidebar-border: oklch(0.3 0.01 250);
-  --sidebar-ring: oklch(0.5 0.04 250);
+  /*
+   * Identidad SIIAB — "Sistema Integral de Información Abordo".
+   * Derivada del logo: ámbar dorado (~#F5B41E) sobre carbón cálido (~#1A1A17).
+   * El ámbar es el único acento y se reserva para lo accionable y el estado
+   * activo; los neutros son cálidos (hue ~85) en vez del gris-azulado default.
+   */
+
+  /* Superficies: neutros cálidos de bajo croma, no gris-azul */
+  --background: oklch(0.975 0.004 85);
+  --foreground: oklch(0.22 0.012 75);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.22 0.012 75);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.22 0.012 75);
+
+  /* Primario = carbón de marca (texto oscuro, botones sólidos serios) */
+  --primary: oklch(0.24 0.012 75);
+  --primary-foreground: oklch(0.98 0.01 85);
+
+  --secondary: oklch(0.955 0.006 85);
+  --secondary-foreground: oklch(0.3 0.012 75);
+  --muted: oklch(0.96 0.005 85);
+  --muted-foreground: oklch(0.52 0.012 75);
+
+  /* Accent = ámbar SIIAB, la personalidad de la marca */
+  --accent: oklch(0.8 0.16 82);
+  --accent-foreground: oklch(0.26 0.03 75);
+
+  --destructive: oklch(0.55 0.2 27);
+  --border: oklch(0.91 0.007 85);
+  --input: oklch(0.91 0.007 85);
+
+  /* Ring = ámbar, para que el foco visible sea parte de la identidad */
+  --ring: oklch(0.8 0.16 82);
+
+  /* Charts en gama ámbar → cálida, coherente con la marca */
+  --chart-1: oklch(0.8 0.16 82);
+  --chart-2: oklch(0.72 0.14 65);
+  --chart-3: oklch(0.62 0.12 48);
+  --chart-4: oklch(0.55 0.08 40);
+  --chart-5: oklch(0.45 0.05 60);
+
+  --radius: 0.625rem;
+
+  /* Sidebar: carbón cálido de marca con acento ámbar en el activo */
+  --sidebar: oklch(0.2 0.008 75);
+  --sidebar-foreground: oklch(0.88 0.006 85);
+  --sidebar-primary: oklch(0.8 0.16 82);
+  --sidebar-primary-foreground: oklch(0.2 0.03 75);
+  --sidebar-accent: oklch(0.27 0.01 75);
+  --sidebar-accent-foreground: oklch(0.96 0.008 85);
+  --sidebar-border: oklch(0.29 0.01 75);
+  --sidebar-ring: oklch(0.8 0.16 82);
 }
 
 @layer base {
@@ -89,5 +109,11 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  /* Titulares con el display de marca: tracking ligeramente cerrado para
+     darle el aire geométrico del logo. */
+  .font-display {
+    font-family: var(--font-display);
+    letter-spacing: -0.015em;
   }
 }

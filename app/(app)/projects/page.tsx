@@ -1,18 +1,17 @@
 import Link from "next/link"
-import Image from "next/image"
 import { requireUser } from "@/lib/auth"
-import { getAccessibleProjects } from "@/lib/permissions"
-import { getStore } from "@/lib/data/store"
+import { getCatalog } from "@/lib/services/catalog"
+import { iconFor } from "@/components/nav-items"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
 import { ArrowRight, BarChart3, FolderKanban, Globe } from "lucide-react"
 
 export default async function ProjectsPage() {
-  const user = await requireUser()
-  const store = getStore()
-  const projects = await getAccessibleProjects(user)
-  const resources = await store.listResources()
+  await requireUser()
+
+  // Proyectos (grupos de menú) y recursos vienen de Keymaster.
+  const { projects, resources } = await getCatalog()
 
   const countsByProject = new Map<string, { reports: number; sites: number }>()
   for (const r of resources) {
@@ -25,9 +24,11 @@ export default async function ProjectsPage() {
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-8">
       <header className="flex flex-col gap-1">
-        <h1 className="text-2xl font-semibold tracking-tight text-balance">Proyectos</h1>
+        <h1 className="font-display text-2xl font-semibold tracking-tight text-balance">
+          Proyectos
+        </h1>
         <p className="text-sm text-muted-foreground text-pretty">
-          Cada proyecto agrupa sus reportes de Looker Studio y sitios web.
+          Cada proyecto agrupa sus reportes y sitios web disponibles para ti.
         </p>
       </header>
 
@@ -47,30 +48,21 @@ export default async function ProjectsPage() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {projects.map((p) => {
             const counts = countsByProject.get(p.id) ?? { reports: 0, sites: 0 }
+            const Icon = iconFor(p.iconName)
             return (
               <Link key={p.id} href={`/projects/${p.id}`} className="group">
-                <Card className="h-full overflow-hidden transition-colors group-hover:border-primary/50">
-                  {p.logoUrl ? (
-                    <div className="flex items-center justify-center bg-muted/40 px-6 py-8">
-                      <Image
-                        src={p.logoUrl}
-                        alt={`Logo de ${p.name}`}
-                        width={200}
-                        height={120}
-                        className="h-24 w-auto object-contain"
-                      />
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-center bg-muted/40 px-6 py-8">
-                      <FolderKanban className="size-16 text-muted-foreground/40" />
-                    </div>
-                  )}
+                <Card className="h-full overflow-hidden transition-colors group-hover:border-accent">
+                  <div className="flex items-center justify-center bg-muted/40 px-6 py-8">
+                    <Icon className="size-14 text-muted-foreground/50" />
+                  </div>
                   <CardHeader className="pt-4">
                     <CardTitle className="flex items-center justify-between gap-2 text-base">
                       <span className="text-balance">{p.name}</span>
-                      <ArrowRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+                      <ArrowRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-accent-foreground" />
                     </CardTitle>
-                    <CardDescription className="text-pretty">{p.description}</CardDescription>
+                    {p.description ? (
+                      <CardDescription className="text-pretty">{p.description}</CardDescription>
+                    ) : null}
                   </CardHeader>
                   <CardContent className="flex gap-2">
                     <Badge variant="default" className="gap-1">

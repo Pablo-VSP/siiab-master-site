@@ -2,7 +2,6 @@
 const nextConfig = {
   // Genera un servidor Node autocontenido en .next/standalone para Docker.
   output: 'standalone',
-  serverExternalPackages: ['better-sqlite3'],
   typescript: {
     ignoreBuildErrors: true,
   },

@@ -19,7 +19,7 @@ export function LoginForm() {
     <div className="flex w-full max-w-sm flex-col gap-4">
       <Card>
         <CardHeader>
-          <CardTitle>Iniciar sesión</CardTitle>
+          <CardTitle className="font-display text-xl">Iniciar sesión</CardTitle>
           <CardDescription>Ingresa con tus credenciales corporativas.</CardDescription>
         </CardHeader>
         <CardContent>

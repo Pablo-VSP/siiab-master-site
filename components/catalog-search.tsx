@@ -66,7 +66,7 @@ export function CatalogSearch({ resources }: { resources: ResourceWithProject[] 
           </ToggleGroup>
 
           <div className="hidden items-center gap-0.5 rounded-lg border border-border p-0.5 sm:flex">
-            <TooltipProvider delayDuration={300}>
+            <TooltipProvider delay={300}>
               {viewOptions.map((opt) => {
                 const Icon = opt.icon
                 const isActive = view === opt.value
