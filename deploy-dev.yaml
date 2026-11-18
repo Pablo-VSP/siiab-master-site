@@ -4,6 +4,7 @@ steps:
   entrypoint: gcloud
   args: ['run', 'deploy', 'mado-gcp-dev-crn-sivain-uc1-master-website',
          '--image', 'gcr.io/proy-ado-siva-indicadores-dev/master-website:latest', '--region', 'us-central1',
+         '--update-env-vars', 'GATEKEEPER_URL=https://mado-gcp-dev-crn-sivain-uc1-ser-master-gatekeeper-247585041755.us-central1.run.app,KEYMASTER_URL=https://mado-gcp-dev-crn-sivain-uc1-ser-master-keymaster-247585041755.us-central1.run.app',
          '--vpc-connector=projects/proy-sha-network/locations/us-central1/connectors/mado-sha-vpc-cn-sivain-01']
 # Reedirigir el tráfico a la ultima version
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'

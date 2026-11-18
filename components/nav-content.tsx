@@ -49,7 +49,7 @@ export function NavContent({
       <div className="flex items-center gap-2.5 px-2 pt-1">
         <div className="flex h-11 items-center justify-start rounded-lg bg-white px-3">
           <Image
-            src="/logos/Logos_SIIAB nuevo.png"
+            src="/logos/Logos_SIIAB_nuevo.png"
             alt="SIIAB — Sistema Integral de Información Abordo"
             width={120}
             height={40}

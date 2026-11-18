@@ -18,7 +18,7 @@ export default function LoginPage() {
         />
         <div className="relative flex h-11 w-40 items-center justify-start rounded-lg bg-white px-3 lg:h-12 lg:w-44">
           <Image
-            src="/logos/Logos_SIIAB nuevo.png"
+            src="/logos/Logos_SIIAB_nuevo.png"
             alt="SIIAB"
             width={176}
             height={48}
