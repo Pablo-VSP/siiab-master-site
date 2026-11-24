@@ -18,6 +18,32 @@ import type { MenuGroup } from "@/lib/services/keymaster"
 //  - Sitio externo  -> pestaña aparte del navegador.
 // -----------------------------------------------------------------------------
 
+// Orden fijo de los grupos dentro de cada sistema: Sitios, Reportes y Páginas.
+type OptionKind = "site" | "report" | "page"
+
+const GROUPS: { kind: OptionKind; label: string }[] = [
+  { kind: "site", label: "Sitios" },
+  { kind: "report", label: "Reportes" },
+  { kind: "page", label: "Páginas" },
+]
+
+/**
+ * Sitio: enlace externo que abre en pestaña aparte. Reporte: enlace externo que
+ * abre en el visor. Página: ruta interna del portal.
+ */
+function kindOf(opt: NavOption): OptionKind {
+  if (!opt.external) return "page"
+  return opensInViewer(opt.command, opt.href) ? "report" : "site"
+}
+
+/** Agrupa las opciones por tipo, conservando el orden de Keymaster dentro de cada grupo. */
+function groupOptions(options: NavOption[]) {
+  return GROUPS.map((g) => ({
+    ...g,
+    options: options.filter((o) => kindOf(o) === g.kind),
+  })).filter((g) => g.options.length > 0)
+}
+
 function matches(text: string | null | undefined, q: string): boolean {
   return (text ?? "").toLowerCase().includes(q)
 }
@@ -131,13 +157,25 @@ export function HomeProjects({ menu }: { menu: MenuGroup[] }) {
                   )}
                 >
                   <div className="min-h-0 overflow-hidden">
-                    <ul className="grid gap-3 border-t border-border p-4 sm:grid-cols-2 lg:grid-cols-3">
-                      {section.options.map((opt) => (
-                        <li key={opt.key}>
-                          <OptionTile opt={opt} />
-                        </li>
+                    <div className="flex flex-col gap-5 border-t border-border p-4">
+                      {groupOptions(section.options).map((group) => (
+                        <section key={group.kind}>
+                          <h3 className="mb-2 flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                            {group.label}
+                            <span className="rounded-full bg-secondary px-1.5 text-xs tabular-nums">
+                              {group.options.length}
+                            </span>
+                          </h3>
+                          <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                            {group.options.map((opt) => (
+                              <li key={opt.key}>
+                                <OptionTile opt={opt} />
+                              </li>
+                            ))}
+                          </ul>
+                        </section>
                       ))}
-                    </ul>
+                    </div>
                   </div>
                 </div>
               </li>
