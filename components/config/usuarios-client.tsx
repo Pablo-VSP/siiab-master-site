@@ -162,12 +162,12 @@ export function UsuariosClient({
         addTitle="Nuevo usuario"
       />
 
-      {error && !modalOpen && <p className="mb-3 text-sm text-red-600">{error}</p>}
+      {error && !modalOpen && <p className="mb-3 text-sm text-red-600 dark:text-red-400">{error}</p>}
 
-      <div className="overflow-x-auto rounded-lg border border-zinc-200">
+      <div className="overflow-x-auto rounded-lg border border-border">
         <table className="w-full border-collapse text-sm">
           <thead>
-            <tr className="bg-[#6b2a6b] text-white">
+            <tr className="bg-config text-white">
               <th className="px-4 py-3 text-left font-semibold">Clave</th>
               <th className="px-4 py-3 text-left font-semibold">Login</th>
               <th className="px-4 py-3 text-left font-semibold">Nombre</th>
@@ -180,20 +180,20 @@ export function UsuariosClient({
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-4 py-10 text-center text-zinc-400">
+                <td colSpan={7} className="px-4 py-10 text-center text-muted-foreground">
                   No hay usuarios que coincidan.
                 </td>
               </tr>
             ) : (
               filtered.map((u) => (
-                <tr key={u.pk_id} className="border-t border-zinc-100 hover:bg-zinc-50">
-                  <td className="px-4 py-3 text-zinc-500">{u.pk_id}</td>
-                  <td className="px-4 py-3 font-medium text-zinc-800">{u.login}</td>
-                  <td className="px-4 py-3 text-zinc-700">
+                <tr key={u.pk_id} className="border-t border-border hover:bg-muted/50">
+                  <td className="px-4 py-3 text-muted-foreground">{u.pk_id}</td>
+                  <td className="px-4 py-3 font-medium text-foreground">{u.login}</td>
+                  <td className="px-4 py-3 text-foreground">
                     {u.name} {u.last_name ?? ""}
                   </td>
-                  <td className="px-4 py-3 text-zinc-500">{u.email ?? "—"}</td>
-                  <td className="px-4 py-3 text-zinc-500">{u.cell_phone ?? "—"}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{u.email ?? "—"}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{u.cell_phone ?? "—"}</td>
                   <td className="px-4 py-3">
                     <StatusBadge active={u.active === 1} />
                   </td>
@@ -238,8 +238,8 @@ export function UsuariosClient({
         width="max-w-lg"
       >
         <form onSubmit={submit} className="flex flex-col gap-4">
-          {editing && <p className="text-sm text-zinc-400">Usuario #{editing.pk_id}</p>}
-          {error && modalOpen && <p className="text-sm text-red-600">{error}</p>}
+          {editing && <p className="text-sm text-muted-foreground">Usuario #{editing.pk_id}</p>}
+          {error && modalOpen && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
 
           <div className="grid grid-cols-2 gap-4">
             <UField label="Login" htmlFor="u-login">
@@ -248,7 +248,7 @@ export function UsuariosClient({
                 value={form.login}
                 onChange={(e) => setForm({ ...form, login: e.target.value })}
                 required
-                className="w-full rounded bg-zinc-100 px-3 py-2 text-sm text-zinc-800 outline-none"
+                className="w-full rounded bg-muted px-3 py-2 text-sm text-foreground outline-none"
               />
             </UField>
             <UField
@@ -262,7 +262,7 @@ export function UsuariosClient({
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
                 required={!editing}
                 placeholder={editing ? "••••••" : ""}
-                className="w-full rounded bg-zinc-100 px-3 py-2 text-sm text-zinc-800 outline-none"
+                className="w-full rounded bg-muted px-3 py-2 text-sm text-foreground outline-none"
               />
             </UField>
           </div>
@@ -274,7 +274,7 @@ export function UsuariosClient({
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 required
-                className="w-full rounded bg-zinc-100 px-3 py-2 text-sm text-zinc-800 outline-none"
+                className="w-full rounded bg-muted px-3 py-2 text-sm text-foreground outline-none"
               />
             </UField>
             <UField label="Apellido" htmlFor="u-last">
@@ -282,7 +282,7 @@ export function UsuariosClient({
                 id="u-last"
                 value={form.last_name ?? ""}
                 onChange={(e) => setForm({ ...form, last_name: e.target.value })}
-                className="w-full rounded bg-zinc-100 px-3 py-2 text-sm text-zinc-800 outline-none"
+                className="w-full rounded bg-muted px-3 py-2 text-sm text-foreground outline-none"
               />
             </UField>
           </div>
@@ -294,7 +294,7 @@ export function UsuariosClient({
                 type="email"
                 value={form.email ?? ""}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="w-full rounded bg-zinc-100 px-3 py-2 text-sm text-zinc-800 outline-none"
+                className="w-full rounded bg-muted px-3 py-2 text-sm text-foreground outline-none"
               />
             </UField>
             <UField label="Teléfono" htmlFor="u-phone">
@@ -302,7 +302,7 @@ export function UsuariosClient({
                 id="u-phone"
                 value={form.cell_phone ?? ""}
                 onChange={(e) => setForm({ ...form, cell_phone: e.target.value })}
-                className="w-full rounded bg-zinc-100 px-3 py-2 text-sm text-zinc-800 outline-none"
+                className="w-full rounded bg-muted px-3 py-2 text-sm text-foreground outline-none"
               />
             </UField>
           </div>
@@ -313,7 +313,7 @@ export function UsuariosClient({
               onToggle={() => setForm({ ...form, active: form.active === 1 ? 0 : 1 })}
               label="Activo"
             />
-            <span className="text-sm text-zinc-600">
+            <span className="text-sm text-muted-foreground">
               {form.active === 1 ? "Activo" : "Inactivo"}
             </span>
           </div>
@@ -357,7 +357,7 @@ function UField({
 }) {
   return (
     <div className="flex flex-col gap-1">
-      <label htmlFor={htmlFor} className="text-xs text-zinc-500">
+      <label htmlFor={htmlFor} className="text-xs text-muted-foreground">
         {label}
       </label>
       {children}

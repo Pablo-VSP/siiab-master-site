@@ -12,7 +12,8 @@ import {
 
 export const metadata = { title: "Configuración" }
 
-const PURPLE = "#6b2a6b"
+// Variable CSS: cambia sola con el modo oscuro (ver globals.css).
+const PURPLE = "var(--config-purple-text)"
 
 const items = [
   {
@@ -62,7 +63,7 @@ export default async function ConfiguracionPage() {
         <h1 className="text-2xl font-bold tracking-tight" style={{ color: PURPLE }}>
           Configuración
         </h1>
-        <p className="text-sm text-zinc-500">
+        <p className="text-sm text-muted-foreground">
           Gestión de menús, opciones, usuarios y sus permisos de navegación.
         </p>
       </header>
@@ -74,21 +75,24 @@ export default async function ConfiguracionPage() {
             <Link
               key={item.href}
               href={item.href}
-              className="group flex flex-col gap-3 rounded-lg border border-zinc-200 bg-white p-5 transition-colors hover:border-[color:var(--p)]"
+              className="group flex flex-col gap-3 rounded-lg border border-border bg-card p-5 transition-colors hover:border-[color:var(--p)]"
               style={{ ["--p" as string]: PURPLE }}
             >
               <div className="flex items-center justify-between">
                 <span
                   className="flex size-10 items-center justify-center rounded-md"
-                  style={{ backgroundColor: `${PURPLE}1a`, color: PURPLE }}
+                  style={{
+                    backgroundColor: `color-mix(in oklab, ${PURPLE} 12%, transparent)`,
+                    color: PURPLE,
+                  }}
                 >
                   <Icon className="size-5" />
                 </span>
-                <ArrowRight className="size-4 text-zinc-300 transition-all group-hover:translate-x-0.5 group-hover:text-[color:var(--p)]" />
+                <ArrowRight className="size-4 text-muted-foreground transition-all group-hover:translate-x-0.5 group-hover:text-[color:var(--p)]" />
               </div>
               <div>
-                <h2 className="font-semibold text-zinc-800">{item.title}</h2>
-                <p className="mt-1 text-sm text-zinc-500">{item.description}</p>
+                <h2 className="font-semibold text-foreground">{item.title}</h2>
+                <p className="mt-1 text-sm text-muted-foreground">{item.description}</p>
               </div>
             </Link>
           )

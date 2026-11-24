@@ -25,10 +25,10 @@ export default async function ProjectsPage() {
     <div className="mx-auto flex max-w-6xl flex-col gap-8">
       <header className="flex flex-col gap-1">
         <h1 className="font-display text-2xl font-semibold tracking-tight text-balance">
-          Proyectos
+          Sistemas
         </h1>
         <p className="text-sm text-muted-foreground text-pretty">
-          Cada proyecto agrupa sus reportes y sitios web disponibles para ti.
+          Cada sistema agrupa sus reportes y sitios web disponibles para ti.
         </p>
       </header>
 
@@ -38,9 +38,9 @@ export default async function ProjectsPage() {
             <EmptyMedia variant="icon">
               <FolderKanban />
             </EmptyMedia>
-            <EmptyTitle>Sin proyectos asignados</EmptyTitle>
+            <EmptyTitle>Sin sistemas asignados</EmptyTitle>
             <EmptyDescription>
-              Aún no tienes acceso a ningún proyecto. Contacta a un administrador.
+              Aún no tienes acceso a ningún sistema. Contacta a un administrador.
             </EmptyDescription>
           </EmptyHeader>
         </Empty>

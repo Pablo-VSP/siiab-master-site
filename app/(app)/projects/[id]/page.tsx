@@ -31,7 +31,7 @@ export default async function ProjectDetailPage({
           className="inline-flex w-fit items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="size-4" />
-          Proyectos
+          Sistemas
         </Link>
         <header className="flex flex-col gap-1">
           <h1 className="font-display text-2xl font-semibold tracking-tight text-balance">
@@ -52,7 +52,7 @@ export default async function ProjectDetailPage({
               <FolderX />
             </EmptyMedia>
             <EmptyTitle>Sin recursos</EmptyTitle>
-            <EmptyDescription>Este proyecto todavía no tiene reportes ni sitios.</EmptyDescription>
+            <EmptyDescription>Este sistema todavía no tiene reportes ni sitios.</EmptyDescription>
           </EmptyHeader>
         </Empty>
       ) : (

@@ -45,7 +45,7 @@ export function ConfigModal({
         aria-modal="true"
         aria-label={title}
         onClick={(e) => e.stopPropagation()}
-        className={`w-full ${width} overflow-hidden rounded-lg bg-white shadow-2xl`}
+        className={`w-full ${width} overflow-hidden rounded-lg bg-card shadow-2xl`}
       >
         <div
           className="flex items-center justify-between px-5 py-4"
@@ -82,7 +82,7 @@ export function ConfigModalActions({
       <button
         type="button"
         onClick={onCancel}
-        className="text-sm font-semibold tracking-wide text-zinc-700 uppercase hover:text-zinc-900"
+        className="text-sm font-semibold tracking-wide text-foreground uppercase hover:text-foreground"
       >
         Cancelar
       </button>

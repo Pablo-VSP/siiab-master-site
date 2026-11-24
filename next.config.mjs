@@ -5,6 +5,8 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  // Oculta el indicador de desarrollo de Next (el botón "N" y su menú).
+  devIndicators: false,
   images: {
     unoptimized: true,
   },

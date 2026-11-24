@@ -13,7 +13,7 @@ import {
   deleteMenuPerfilUser,
 } from "@/app/actions/menu-admin"
 import { ConfigModal } from "./config-modal"
-import { CONFIG_PURPLE } from "./config-ui"
+import { CONFIG_PURPLE, CONFIG_PURPLE_TEXT } from "./config-ui"
 
 // Modal "Perfiles del usuario": muestra los menús (perfiles) asignados al
 // usuario y permite agregar/quitar. Calca el mockup del escudito.
@@ -73,27 +73,27 @@ export function UserProfilesModal({
 
   return (
     <ConfigModal open={open} onClose={onClose} title="Perfiles del usuario">
-      <p className="mb-4 text-sm text-zinc-400">
+      <p className="mb-4 text-sm text-muted-foreground">
         {user.name} {user.last_name ?? ""}{" "}
-        <span className="text-zinc-400">({user.login})</span>
+        <span className="text-muted-foreground">({user.login})</span>
       </p>
 
       <div
         className="mb-2 flex items-center gap-2 text-sm font-semibold"
-        style={{ color: CONFIG_PURPLE }}
+        style={{ color: CONFIG_PURPLE_TEXT }}
       >
         <CheckCircle2 className="size-4" />
         Menús asignados
       </div>
-      <div className="divide-y divide-zinc-100 border-y border-zinc-100">
+      <div className="divide-y divide-border border-y border-border">
         {userAssignments.length === 0 ? (
-          <p className="py-3 text-sm text-zinc-400">Sin menús asignados.</p>
+          <p className="py-3 text-sm text-muted-foreground">Sin menús asignados.</p>
         ) : (
           userAssignments.map((a) => (
             <div key={a.pk_id} className="flex items-center justify-between py-3">
               <div className="flex items-center gap-3">
-                <MenuIcon className="size-4 text-zinc-400" />
-                <span className="text-sm font-medium text-zinc-800">
+                <MenuIcon className="size-4 text-muted-foreground" />
+                <span className="text-sm font-medium text-foreground">
                   {a.menus?.name ??
                     perfiles.find((p) => p.pk_id === a.menu_id)?.name ??
                     `Menú #${a.menu_id}`}
@@ -114,23 +114,23 @@ export function UserProfilesModal({
         )}
       </div>
 
-      {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+      {error && <p className="mt-3 text-sm text-red-600 dark:text-red-400">{error}</p>}
 
       <div
         className="mt-5 mb-2 flex items-center gap-2 text-sm font-semibold"
-        style={{ color: CONFIG_PURPLE }}
+        style={{ color: CONFIG_PURPLE_TEXT }}
       >
         <PlusCircle className="size-4" />
         Agregar menú
       </div>
       <div className="flex items-center gap-3">
-        <div className="flex flex-1 items-center gap-2 rounded bg-zinc-100 px-3 py-2">
-          <MenuIcon className="size-4 shrink-0 text-zinc-400" />
+        <div className="flex flex-1 items-center gap-2 rounded bg-muted px-3 py-2">
+          <MenuIcon className="size-4 shrink-0 text-muted-foreground" />
           <select
             aria-label="Seleccionar menú"
             value={selected}
             onChange={(e) => setSelected(e.target.value)}
-            className="w-full bg-transparent text-sm text-zinc-700 outline-none"
+            className="w-full bg-transparent text-sm text-foreground outline-none"
           >
             <option value="">Seleccionar menú</option>
             {available.map((p) => (

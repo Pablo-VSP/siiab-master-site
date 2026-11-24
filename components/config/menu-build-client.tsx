@@ -14,7 +14,7 @@ import {
   updateMenuBuild,
   deleteMenuBuild,
 } from "@/app/actions/menu-admin"
-import { CONFIG_PURPLE } from "./config-ui"
+import { CONFIG_PURPLE, CONFIG_PURPLE_TEXT } from "./config-ui"
 import { ConfigModal, ConfigModalActions } from "./config-modal"
 
 // -----------------------------------------------------------------------------
@@ -257,17 +257,17 @@ export function MenuBuildClient({
     <div>
       <h1
         className="mb-6 text-2xl font-bold tracking-tight"
-        style={{ color: CONFIG_PURPLE }}
+        style={{ color: CONFIG_PURPLE_TEXT }}
       >
         Construcción del menú
       </h1>
 
-      {error && <p className="mb-3 text-sm text-red-600">{error}</p>}
+      {error && <p className="mb-3 text-sm text-red-600 dark:text-red-400">{error}</p>}
 
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
         {/* Columna 1: Menús (perfiles) */}
         <Column title="Menús">
-          <div className="divide-y divide-zinc-100">
+          <div className="divide-y divide-border">
             {perfiles.map((p) => {
               const count = sectionCountByPerfil.get(p.pk_id)?.size ?? 0
               const active = p.pk_id === selectedPerfil
@@ -277,12 +277,12 @@ export function MenuBuildClient({
                   type="button"
                   onClick={() => selectPerfil(p.pk_id)}
                   className={`flex w-full items-center justify-between px-4 py-3 text-left transition-colors ${
-                    active ? "bg-zinc-100" : "hover:bg-zinc-50"
+                    active ? "bg-muted" : "hover:bg-muted/50"
                   }`}
                 >
                   <span className="flex items-center gap-3">
-                    <MenuIcon className="size-4 text-zinc-400" />
-                    <span className="text-sm font-medium text-zinc-800">{p.name}</span>
+                    <MenuIcon className="size-4 text-muted-foreground" />
+                    <span className="text-sm font-medium text-foreground">{p.name}</span>
                   </span>
                   <CountBadge n={count} />
                 </button>
@@ -302,14 +302,14 @@ export function MenuBuildClient({
           ) : sections.length === 0 ? (
             <Hint>Sin secciones. Usa “+” para agregar.</Hint>
           ) : (
-            <div className="divide-y divide-zinc-100">
+            <div className="divide-y divide-border">
               {sections.map((s) => {
                 const active = s.menuMenuId === selectedSection
                 return (
                   <div
                     key={s.menuMenuId}
                     className={`flex items-center justify-between gap-2 px-4 py-3 ${
-                      active ? "bg-zinc-100" : "hover:bg-zinc-50"
+                      active ? "bg-muted" : "hover:bg-muted/50"
                     }`}
                   >
                     <button
@@ -317,7 +317,7 @@ export function MenuBuildClient({
                       onClick={() => setSelectedSection(s.menuMenuId)}
                       className="min-w-0 flex-1 text-left"
                     >
-                      <p className="truncate text-sm font-medium text-zinc-800">
+                      <p className="truncate text-sm font-medium text-foreground">
                         {s.name}
                       </p>
                       <OrderInput
@@ -350,14 +350,14 @@ export function MenuBuildClient({
           ) : sectionBuilds.length === 0 ? (
             <Hint>Sin opciones. Usa “+” para agregar.</Hint>
           ) : (
-            <div className="divide-y divide-zinc-100">
+            <div className="divide-y divide-border">
               {sectionBuilds.map((b) => (
                 <div
                   key={b.pk_id}
                   className="flex items-center justify-between gap-2 px-4 py-3"
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-zinc-800">
+                    <p className="truncate text-sm font-medium text-foreground">
                       {b.menu_option?.name ?? optionName(b.menu_option_id)}
                     </p>
                     <OrderInput
@@ -385,7 +385,7 @@ export function MenuBuildClient({
         title={addMode === "section" ? "Agregar sección" : "Agregar opción"}
       >
         <form onSubmit={submitAdd} className="flex flex-col gap-4">
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
 
           {addMode === "section" && (
             <>
@@ -395,7 +395,7 @@ export function MenuBuildClient({
                   value={pickMenu}
                   onChange={(e) => setPickMenu(e.target.value)}
                   required
-                  className="w-full rounded bg-zinc-100 px-3 py-2 text-sm text-zinc-800 outline-none"
+                  className="w-full rounded bg-muted px-3 py-2 text-sm text-foreground outline-none"
                 >
                   <option value="">Seleccionar submenú</option>
                   {menusNotInPerfil.map((m) => (
@@ -411,7 +411,7 @@ export function MenuBuildClient({
                   value={pickOption}
                   onChange={(e) => setPickOption(e.target.value)}
                   required
-                  className="w-full rounded bg-zinc-100 px-3 py-2 text-sm text-zinc-800 outline-none"
+                  className="w-full rounded bg-muted px-3 py-2 text-sm text-foreground outline-none"
                 >
                   <option value="">Seleccionar opción</option>
                   {options.map((o) => (
@@ -431,7 +431,7 @@ export function MenuBuildClient({
                 value={pickOption}
                 onChange={(e) => setPickOption(e.target.value)}
                 required
-                className="w-full rounded bg-zinc-100 px-3 py-2 text-sm text-zinc-800 outline-none"
+                className="w-full rounded bg-muted px-3 py-2 text-sm text-foreground outline-none"
               >
                 <option value="">Seleccionar opción</option>
                 {availableOptions.map((o) => (
@@ -466,7 +466,7 @@ function Column({
   children: React.ReactNode
 }) {
   return (
-    <div className="overflow-hidden rounded-lg border border-zinc-200 bg-white">
+    <div className="overflow-hidden rounded-lg border border-border bg-card">
       <div
         className="flex items-center justify-between px-4 py-3 text-white"
         style={{ backgroundColor: CONFIG_PURPLE }}
@@ -496,7 +496,7 @@ function Column({
 
 function CountBadge({ n }: { n: number }) {
   return (
-    <span className="inline-flex min-w-7 items-center justify-center rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-600">
+    <span className="inline-flex min-w-7 items-center justify-center rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
       {n}
     </span>
   )
@@ -537,7 +537,7 @@ function OrderInput({
 }) {
   const [local, setLocal] = useState(String(value))
   return (
-    <span className="mt-0.5 flex items-center gap-1 text-xs text-zinc-400">
+    <span className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
       Orden:
       <input
         type="number"
@@ -550,14 +550,14 @@ function OrderInput({
           const n = Number(local)
           if (!Number.isNaN(n) && n !== value) onCommit(n)
         }}
-        className="w-12 rounded border border-zinc-200 bg-white px-1 py-0.5 text-xs text-zinc-700 outline-none"
+        className="w-12 rounded border border-border bg-card px-1 py-0.5 text-xs text-foreground outline-none"
       />
     </span>
   )
 }
 
 function Hint({ children }: { children: React.ReactNode }) {
-  return <p className="px-4 py-6 text-sm text-zinc-400">{children}</p>
+  return <p className="px-4 py-6 text-sm text-muted-foreground">{children}</p>
 }
 
 function PickField({
@@ -571,7 +571,7 @@ function PickField({
 }) {
   return (
     <div className="flex flex-col gap-1">
-      <label htmlFor={htmlFor} className="text-xs text-zinc-500">
+      <label htmlFor={htmlFor} className="text-xs text-muted-foreground">
         {label}
       </label>
       {children}

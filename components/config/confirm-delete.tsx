@@ -20,16 +20,16 @@ export function ConfirmDelete({
 }) {
   return (
     <ConfigModal open={open} onClose={onClose} title={`Eliminar ${entity}`}>
-      <p className="text-sm text-zinc-700">
+      <p className="text-sm text-foreground">
         ¿Seguro que quieres eliminar{" "}
-        <strong className="text-zinc-900">{name}</strong>? Esta acción no se puede
+        <strong className="text-foreground">{name}</strong>? Esta acción no se puede
         deshacer.
       </p>
       <div className="mt-6 flex items-center justify-center gap-6">
         <button
           type="button"
           onClick={onClose}
-          className="text-sm font-semibold tracking-wide text-zinc-700 uppercase hover:text-zinc-900"
+          className="text-sm font-semibold tracking-wide text-foreground uppercase hover:text-foreground"
         >
           Cancelar
         </button>

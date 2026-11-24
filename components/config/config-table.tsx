@@ -37,28 +37,28 @@ export function ConfigToolbar({
       {textFilters.map((f) => (
         <div
           key={f.id}
-          className="flex min-w-[180px] flex-1 items-center gap-2 rounded-md bg-zinc-100 px-3 py-2"
+          className="flex min-w-[180px] flex-1 items-center gap-2 rounded-md bg-muted px-3 py-2"
         >
-          <Search className="size-4 shrink-0 text-zinc-400" />
+          <Search className="size-4 shrink-0 text-muted-foreground" />
           <input
             aria-label={f.placeholder}
             placeholder={f.placeholder}
             value={f.value}
             onChange={(e) => f.onChange(e.target.value)}
-            className="w-full bg-transparent text-sm text-zinc-700 outline-none placeholder:text-zinc-400"
+            className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
           />
         </div>
       ))}
 
-      <div className="flex min-w-[180px] items-center gap-2 rounded-md bg-zinc-100 px-3 py-1.5">
-        <Search className="size-4 shrink-0 text-zinc-400" />
+      <div className="flex min-w-[180px] items-center gap-2 rounded-md bg-muted px-3 py-1.5">
+        <Search className="size-4 shrink-0 text-muted-foreground" />
         <div className="flex flex-col">
-          <span className="text-[10px] leading-tight text-zinc-400">Estado</span>
+          <span className="text-[10px] leading-tight text-muted-foreground">Estado</span>
           <select
             aria-label="Filtrar por estado"
             value={statusFilter}
             onChange={(e) => onStatusChange(e.target.value as StatusFilter)}
-            className="bg-transparent text-sm text-zinc-700 outline-none"
+            className="bg-transparent text-sm text-foreground outline-none"
           >
             <option value="all">Todos</option>
             <option value="active">Activos</option>
@@ -72,7 +72,7 @@ export function ConfigToolbar({
         onClick={onSearch}
         title="Buscar"
         aria-label="Buscar"
-        className="inline-flex size-11 items-center justify-center rounded-full border border-zinc-200 bg-white text-zinc-500 shadow-sm transition-colors hover:text-zinc-800"
+        className="inline-flex size-11 items-center justify-center rounded-full border border-border bg-card text-muted-foreground shadow-sm transition-colors hover:text-foreground"
       >
         <Search className="size-5" />
       </button>
@@ -101,7 +101,7 @@ export function ConfigTable<T>({
   empty?: string
 }) {
   return (
-    <div className="overflow-hidden rounded-lg border border-zinc-200">
+    <div className="overflow-hidden rounded-lg border border-border">
       <table className="w-full border-collapse text-sm">
         <thead>
           <tr style={{ backgroundColor: CONFIG_PURPLE }} className="text-white">
@@ -123,7 +123,7 @@ export function ConfigTable<T>({
             <tr>
               <td
                 colSpan={columns.length}
-                className="px-4 py-10 text-center text-sm text-zinc-400"
+                className="px-4 py-10 text-center text-sm text-muted-foreground"
               >
                 {empty}
               </td>
@@ -132,7 +132,7 @@ export function ConfigTable<T>({
             rows.map((row) => (
               <tr
                 key={rowKey(row)}
-                className="border-t border-zinc-100 hover:bg-zinc-50"
+                className="border-t border-border hover:bg-muted/50"
               >
                 {columns.map((c) => (
                   <td key={c.key} className={cn("px-4 py-3 align-middle", c.className)}>

@@ -32,18 +32,18 @@ export function IconField({
   const Preview = iconFor(value || null)
   return (
     <div className="flex flex-col gap-1">
-      <label htmlFor="icon-name" className="text-xs text-zinc-500">
+      <label htmlFor="icon-name" className="text-xs text-muted-foreground">
         Ícono (nombre)
       </label>
-      <div className="flex items-center gap-2 rounded bg-zinc-100 px-3 py-2">
-        <Preview className="size-4 shrink-0 text-zinc-500" />
+      <div className="flex items-center gap-2 rounded bg-muted px-3 py-2">
+        <Preview className="size-4 shrink-0 text-muted-foreground" />
         <input
           id="icon-name"
           list="known-icons"
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder="settings, users, chart…"
-          className="w-full bg-transparent text-sm text-zinc-800 outline-none"
+          className="w-full bg-transparent text-sm text-foreground outline-none"
         />
       </div>
       <datalist id="known-icons">

@@ -1,5 +1,6 @@
 import { LoginForm } from "@/components/login-form"
 import Image from "next/image"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 export default function LoginPage() {
   return (
@@ -29,7 +30,7 @@ export default function LoginPage() {
 
         <div className="relative hidden max-w-md flex-col gap-3 lg:flex">
           <h1 className="font-display text-4xl font-semibold leading-tight text-balance">
-            Toda la información de tus proyectos, en un solo lugar.
+            Toda la información de tus sistemas, en un solo lugar.
           </h1>
           <p className="text-sm leading-relaxed text-sidebar-foreground/70 text-pretty">
             Sitios, reportes y solicitudes de vacaciones, con acceso según tu rol.
@@ -42,13 +43,16 @@ export default function LoginPage() {
       </aside>
 
       {/* Panel de acceso */}
-      <div className="flex flex-col items-center justify-center gap-6 px-4 py-10">
+      <div className="relative flex flex-col items-center justify-center gap-6 px-4 py-10">
+        <div className="absolute top-4 right-4 w-auto">
+          <ThemeToggle />
+        </div>
         <div className="flex flex-col gap-1 text-center lg:hidden">
           <h2 className="font-display text-2xl font-semibold tracking-tight">
             Bienvenido
           </h2>
           <p className="max-w-sm text-sm text-muted-foreground text-pretty">
-            Ingresa para ver tus proyectos y reportes.
+            Ingresa para ver tus sistemas y reportes.
           </p>
         </div>
         <LoginForm />

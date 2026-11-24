@@ -17,8 +17,11 @@ const spaceGrotesk = Space_Grotesk({
 export const metadata: Metadata = {
   title: 'SIIAB · Portal Interno',
   description:
-    'Portal interno SIIAB — catálogo de sitios y reportes por proyecto, control de acceso por roles y gestión de solicitudes de vacaciones.',
+    'Portal interno SIIAB — catálogo de sitios y reportes por sistema, control de acceso por roles y gestión de solicitudes de vacaciones.',
 }
+
+// Debe coincidir con la clave que escribe `ThemeToggle` ("theme": "light" | "dark").
+const THEME_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem('theme');var d=t?t==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;if(d)document.documentElement.classList.add('dark')}catch(e){}})()`
 
 export const viewport: Viewport = {
   themeColor: 'oklch(0.2 0.008 75)',
@@ -30,10 +33,18 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
+    // suppressHydrationWarning: el script de abajo agrega la clase `dark` a
+    // <html> antes de que React hidrate, así que el className difiere a propósito.
     <html
       lang="es"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable}`}
     >
+      <head>
+        {/* Aplica el tema guardado (o el del sistema) antes del primer pintado,
+            para evitar un destello de modo claro al recargar. */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      </head>
       <body className="bg-background font-sans antialiased">
         {children}
         <Toaster position="top-right" />

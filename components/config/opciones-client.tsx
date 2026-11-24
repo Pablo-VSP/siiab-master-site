@@ -4,7 +4,8 @@ import { useMemo, useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 import { ListChecks, Pencil, Trash2 } from "lucide-react"
 import type { MenuOptionRow } from "@/lib/services/keymaster-crud"
-import { iconFor } from "@/components/nav-items"
+import { iconFor, logoSrc } from "@/components/nav-items"
+import { NavImage } from "@/components/nav-image"
 import {
   createMenuOption,
   updateMenuOption,
@@ -147,71 +148,75 @@ export function OpcionesClient({ options }: { options: MenuOptionRow[] }) {
         addTitle="Nueva opción"
       />
 
-      {error && !modalOpen && <p className="mb-3 text-sm text-red-600">{error}</p>}
+      {error && !modalOpen && <p className="mb-3 text-sm text-red-600 dark:text-red-400">{error}</p>}
 
-      <div className="overflow-x-auto rounded-lg border border-zinc-200">
+      <div className="overflow-x-auto rounded-lg border border-border">
         <table className="w-full border-collapse text-sm">
           <thead>
-            <tr className="bg-[#6b2a6b] text-white">
-              <th className="w-16 px-4 py-3 text-left font-semibold">Ícono</th>
-              <th className="px-4 py-3 text-left font-semibold">Nombre</th>
-              <th className="px-4 py-3 text-left font-semibold">Descripción</th>
-              <th className="px-4 py-3 text-left font-semibold">Destino</th>
-              <th className="px-4 py-3 text-left font-semibold">Comando</th>
-              <th className="px-4 py-3 text-left font-semibold">Estado</th>
-              <th className="px-4 py-3 text-right font-semibold">Acciones</th>
+            <tr className="bg-config text-white">
+              <th className="w-16 px-2.5 py-3 text-left font-semibold">Ícono</th>
+              <th className="px-2.5 py-3 text-left font-semibold">Nombre</th>
+              <th className="px-2.5 py-3 text-left font-semibold">Descripción</th>
+              <th className="px-2.5 py-3 text-left font-semibold">Destino</th>
+              <th className="px-2.5 py-3 text-left font-semibold">Comando</th>
+              <th className="px-2.5 py-3 text-left font-semibold">Estado</th>
+              <th className="px-2.5 py-3 text-right font-semibold">Acciones</th>
             </tr>
           </thead>
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-4 py-10 text-center text-zinc-400">
+                <td colSpan={7} className="px-4 py-10 text-center text-muted-foreground">
                   No hay opciones que coincidan.
                 </td>
               </tr>
             ) : (
               filtered.map((o) => {
-                const Icon = iconFor(o.icon_name)
                 const isExternal = Boolean(o.external_url)
                 const target = o.external_url || o.url
                 return (
-                  <tr key={o.pk_id} className="border-t border-zinc-100 hover:bg-zinc-50">
-                    <td className="px-4 py-3 text-zinc-500">
-                      <Icon className="size-4" />
+                  <tr key={o.pk_id} className="border-t border-border hover:bg-muted/50">
+                    <td className="px-2.5 py-3 text-muted-foreground">
+                      <NavImage
+                        src={logoSrc(o.img)}
+                        fallback={iconFor(o.icon_name)}
+                        className="size-7"
+                        fallbackClassName="size-4"
+                      />
                     </td>
-                    <td className="px-4 py-3 font-medium text-zinc-800">{o.name}</td>
-                    <td className="max-w-[220px] truncate px-4 py-3 text-zinc-500">
+                    <td className="px-2.5 py-3 font-medium text-foreground">{o.name}</td>
+                    <td className="max-w-[150px] truncate px-2.5 py-3 text-muted-foreground">
                       {o.description ?? "—"}
                     </td>
-                    <td className="max-w-[260px] px-4 py-3">
+                    <td className="max-w-[200px] px-2.5 py-3">
                       {target ? (
                         <div className="flex items-center gap-2">
                           <span
                             className={
                               "shrink-0 rounded px-1.5 py-0.5 text-[10px] font-medium " +
                               (isExternal
-                                ? "bg-amber-100 text-amber-700"
-                                : "bg-zinc-100 text-zinc-500")
+                                ? "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400"
+                                : "bg-muted text-muted-foreground")
                             }
                           >
                             {isExternal ? "externa" : "interna"}
                           </span>
-                          <span className="truncate font-mono text-xs text-zinc-500" title={target}>
+                          <span className="truncate font-mono text-xs text-muted-foreground" title={target}>
                             {target}
                           </span>
                         </div>
                       ) : (
-                        <span className="text-zinc-400">—</span>
+                        <span className="text-muted-foreground">—</span>
                       )}
                     </td>
-                    <td className="px-4 py-3 font-mono text-xs text-zinc-500">
+                    <td className="px-2.5 py-3 font-mono text-xs text-muted-foreground">
                       {o.command ?? "—"}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-2.5 py-3">
                       <StatusBadge active={o.active === 1} />
                     </td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center justify-end gap-2">
+                    <td className="px-2.5 py-3">
+                      <div className="flex items-center justify-end gap-1.5">
                         <StatusToggle
                           active={o.active === 1}
                           onToggle={() => toggle(o)}
@@ -245,8 +250,8 @@ export function OpcionesClient({ options }: { options: MenuOptionRow[] }) {
         width="max-w-2xl"
       >
         <form onSubmit={submit} className="flex flex-col gap-4">
-          {editing && <p className="text-sm text-zinc-400">Opción #{editing.pk_id}</p>}
-          {error && modalOpen && <p className="text-sm text-red-600">{error}</p>}
+          {editing && <p className="text-sm text-muted-foreground">Opción #{editing.pk_id}</p>}
+          {error && modalOpen && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Field label="Nombre" htmlFor="op-name">
@@ -256,7 +261,7 @@ export function OpcionesClient({ options }: { options: MenuOptionRow[] }) {
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 required
                 minLength={2}
-                className="w-full rounded bg-zinc-100 px-3 py-2 text-sm text-zinc-800 outline-none"
+                className="w-full rounded bg-muted px-3 py-2 text-sm text-foreground outline-none"
               />
             </Field>
             <Field label="Comando" htmlFor="op-cmd">
@@ -265,7 +270,7 @@ export function OpcionesClient({ options }: { options: MenuOptionRow[] }) {
                 value={form.command ?? ""}
                 onChange={(e) => setForm({ ...form, command: e.target.value })}
                 placeholder="Link"
-                className="w-full rounded bg-zinc-100 px-3 py-2 text-sm text-zinc-800 outline-none"
+                className="w-full rounded bg-muted px-3 py-2 text-sm text-foreground outline-none"
               />
             </Field>
           </div>
@@ -275,7 +280,7 @@ export function OpcionesClient({ options }: { options: MenuOptionRow[] }) {
               id="op-desc"
               value={form.description ?? ""}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
-              className="w-full rounded bg-zinc-100 px-3 py-2 text-sm text-zinc-800 outline-none"
+              className="w-full rounded bg-muted px-3 py-2 text-sm text-foreground outline-none"
             />
           </Field>
 
@@ -286,7 +291,7 @@ export function OpcionesClient({ options }: { options: MenuOptionRow[] }) {
                 value={form.url ?? ""}
                 onChange={(e) => setForm({ ...form, url: e.target.value })}
                 placeholder="/proyectos"
-                className="w-full rounded bg-zinc-100 px-3 py-2 text-sm text-zinc-800 outline-none"
+                className="w-full rounded bg-muted px-3 py-2 text-sm text-foreground outline-none"
               />
             </Field>
             <Field label="URL externa (http…)" htmlFor="op-ext">
@@ -295,7 +300,7 @@ export function OpcionesClient({ options }: { options: MenuOptionRow[] }) {
                 value={form.external_url ?? ""}
                 onChange={(e) => setForm({ ...form, external_url: e.target.value })}
                 placeholder="https://…"
-                className="w-full rounded bg-zinc-100 px-3 py-2 text-sm text-zinc-800 outline-none"
+                className="w-full rounded bg-muted px-3 py-2 text-sm text-foreground outline-none"
               />
             </Field>
           </div>
@@ -311,7 +316,7 @@ export function OpcionesClient({ options }: { options: MenuOptionRow[] }) {
                 value={form.img ?? ""}
                 onChange={(e) => setForm({ ...form, img: e.target.value })}
                 placeholder="https://…/img.png"
-                className="w-full rounded bg-zinc-100 px-3 py-2 text-sm text-zinc-800 outline-none"
+                className="w-full rounded bg-muted px-3 py-2 text-sm text-foreground outline-none"
               />
             </Field>
           </div>
@@ -323,7 +328,7 @@ export function OpcionesClient({ options }: { options: MenuOptionRow[] }) {
                 value={form.img_small ?? ""}
                 onChange={(e) => setForm({ ...form, img_small: e.target.value })}
                 placeholder="https://…/thumb.png"
-                className="w-full rounded bg-zinc-100 px-3 py-2 text-sm text-zinc-800 outline-none"
+                className="w-full rounded bg-muted px-3 py-2 text-sm text-foreground outline-none"
               />
             </Field>
             <div className="flex items-end">
@@ -333,7 +338,7 @@ export function OpcionesClient({ options }: { options: MenuOptionRow[] }) {
                   onToggle={() => setForm({ ...form, active: form.active === 1 ? 0 : 1 })}
                   label="Activo"
                 />
-                <span className="text-sm text-zinc-600">
+                <span className="text-sm text-muted-foreground">
                   {form.active === 1 ? "Activo" : "Inactivo"}
                 </span>
               </div>
@@ -371,7 +376,7 @@ function Field({
 }) {
   return (
     <div className="flex flex-col gap-1">
-      <label htmlFor={htmlFor} className="text-xs text-zinc-500">
+      <label htmlFor={htmlFor} className="text-xs text-muted-foreground">
         {label}
       </label>
       {children}

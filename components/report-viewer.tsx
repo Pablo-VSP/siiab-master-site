@@ -31,11 +31,13 @@ export function ReportViewer({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="flex !h-[85svh] !max-h-[85svh] !w-[90vw] !max-w-[90vw] flex-col gap-3 p-4 sm:p-5">
+      <DialogContent className="flex !h-[94svh] !max-h-[94svh] !w-[97vw] !max-w-[97vw] flex-col gap-3 p-3 sm:p-4">
         <DialogHeader className="flex-row items-start justify-between gap-4 pr-8">
           <div className="flex flex-col gap-1">
             <DialogTitle className="text-balance">{title}</DialogTitle>
-            <DialogDescription>Reporte de Looker Studio embebido.</DialogDescription>
+            <DialogDescription>
+              Si el reporte no se muestra, ábrelo en una pestaña nueva.
+            </DialogDescription>
           </div>
           <Button
             variant="outline"

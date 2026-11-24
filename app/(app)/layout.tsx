@@ -4,6 +4,7 @@ import { getToken, getSummoner } from "@/lib/auth"
 import { fetchAuthorizedMenu } from "@/lib/services/keymaster"
 import { AppSidebar } from "@/components/app-sidebar"
 import { MobileNav } from "@/components/mobile-nav"
+import { ExternalViewerProvider } from "@/components/external-viewer"
 
 export default async function AppLayout({ children }: { children: ReactNode }) {
   const token = await getToken()
@@ -31,12 +32,14 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
   const userName = summonerName || fallbackName || "Usuario"
 
   return (
-    <div className="flex min-h-svh bg-background">
-      <AppSidebar userName={userName} menu={groups} />
-      <div className="flex min-w-0 flex-1 flex-col">
-        <MobileNav userName={userName} menu={groups} />
-        <main className="min-w-0 flex-1 px-4 py-6 md:px-8 md:py-8">{children}</main>
+    <ExternalViewerProvider>
+      <div className="flex min-h-svh bg-background">
+        <AppSidebar userName={userName} menu={groups} />
+        <div className="flex min-w-0 flex-1 flex-col">
+          <MobileNav userName={userName} menu={groups} />
+          <main className="min-w-0 flex-1 px-4 py-6 md:px-8 md:py-8">{children}</main>
+        </div>
       </div>
-    </div>
+    </ExternalViewerProvider>
   )
 }

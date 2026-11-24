@@ -113,13 +113,13 @@ export function MenusClient({ perfiles }: { perfiles: MenuPerfil[] }) {
       />
 
       {error && !modalOpen && (
-        <p className="mb-3 text-sm text-red-600">{error}</p>
+        <p className="mb-3 text-sm text-red-600 dark:text-red-400">{error}</p>
       )}
 
-      <div className="overflow-hidden rounded-lg border border-zinc-200">
+      <div className="overflow-hidden rounded-lg border border-border">
         <table className="w-full border-collapse text-sm">
           <thead>
-            <tr className="bg-[#6b2a6b] text-white">
+            <tr className="bg-config text-white">
               <th className="px-4 py-3 text-left font-semibold">ID</th>
               <th className="px-4 py-3 text-left font-semibold">Nombre</th>
               <th className="px-4 py-3 text-left font-semibold">Estado</th>
@@ -129,15 +129,15 @@ export function MenusClient({ perfiles }: { perfiles: MenuPerfil[] }) {
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={4} className="px-4 py-10 text-center text-zinc-400">
+                <td colSpan={4} className="px-4 py-10 text-center text-muted-foreground">
                   No hay menús que coincidan.
                 </td>
               </tr>
             ) : (
               filtered.map((p) => (
-                <tr key={p.pk_id} className="border-t border-zinc-100 hover:bg-zinc-50">
-                  <td className="px-4 py-3 text-zinc-500">{p.pk_id}</td>
-                  <td className="px-4 py-3 font-medium text-zinc-800">{p.name}</td>
+                <tr key={p.pk_id} className="border-t border-border hover:bg-muted/50">
+                  <td className="px-4 py-3 text-muted-foreground">{p.pk_id}</td>
+                  <td className="px-4 py-3 font-medium text-foreground">{p.name}</td>
                   <td className="px-4 py-3">
                     <StatusBadge active={p.active === 1} />
                   </td>
@@ -175,16 +175,16 @@ export function MenusClient({ perfiles }: { perfiles: MenuPerfil[] }) {
       >
         <form onSubmit={submit}>
           {editing && (
-            <p className="mb-4 text-sm text-zinc-400">Menú #{editing.pk_id}</p>
+            <p className="mb-4 text-sm text-muted-foreground">Menú #{editing.pk_id}</p>
           )}
           {error && modalOpen && (
-            <p className="mb-3 text-sm text-red-600">{error}</p>
+            <p className="mb-3 text-sm text-red-600 dark:text-red-400">{error}</p>
           )}
           <div className="flex items-center gap-4">
-            <div className="flex flex-1 items-center gap-2 rounded bg-zinc-100 px-3 py-2">
-              <MenuIcon className="size-4 shrink-0 text-zinc-500" />
+            <div className="flex flex-1 items-center gap-2 rounded bg-muted px-3 py-2">
+              <MenuIcon className="size-4 shrink-0 text-muted-foreground" />
               <div className="flex-1">
-                <label htmlFor="menu-name" className="block text-[10px] text-zinc-400">
+                <label htmlFor="menu-name" className="block text-[10px] text-muted-foreground">
                   Nombre del menú
                 </label>
                 <input
@@ -193,7 +193,7 @@ export function MenusClient({ perfiles }: { perfiles: MenuPerfil[] }) {
                   onChange={(e) => setFormName(e.target.value)}
                   required
                   minLength={2}
-                  className="w-full bg-transparent text-sm text-zinc-800 outline-none"
+                  className="w-full bg-transparent text-sm text-foreground outline-none"
                 />
               </div>
             </div>
@@ -203,7 +203,7 @@ export function MenusClient({ perfiles }: { perfiles: MenuPerfil[] }) {
                 onToggle={() => setFormActive((v) => !v)}
                 label="Activo"
               />
-              <span className="text-sm text-zinc-600">
+              <span className="text-sm text-muted-foreground">
                 {formActive ? "Activo" : "Inactivo"}
               </span>
             </div>

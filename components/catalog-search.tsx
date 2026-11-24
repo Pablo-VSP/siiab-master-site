@@ -49,7 +49,7 @@ export function CatalogSearch({ resources }: { resources: ResourceWithProject[] 
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Buscar por título, descripción o proyecto..."
+            placeholder="Buscar por título, descripción o sistema..."
             className="pl-9"
             aria-label="Buscar recursos"
           />

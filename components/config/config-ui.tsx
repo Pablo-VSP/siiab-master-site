@@ -8,8 +8,14 @@ import { cn } from "@/lib/utils"
 // badges de estado verde/gris, switch de estado y botones de acción redondos.
 // -----------------------------------------------------------------------------
 
-/** Color de marca de estas pantallas (morado MyTools). */
-export const CONFIG_PURPLE = "#6b2a6b"
+/**
+ * Morado de marca de estas pantallas (MyTools). Son variables CSS que cambian
+ * con el modo oscuro (ver globals.css):
+ *  - CONFIG_PURPLE:      superficies (cabeceras, botones) con texto blanco encima.
+ *  - CONFIG_PURPLE_TEXT: texto, íconos y anillos de foco sobre el fondo de página.
+ */
+export const CONFIG_PURPLE = "var(--config-purple)"
+export const CONFIG_PURPLE_TEXT = "var(--config-purple-text)"
 
 /** Badge de estado Activo/Inactivo. */
 export function StatusBadge({ active }: { active: boolean }) {
@@ -18,8 +24,8 @@ export function StatusBadge({ active }: { active: boolean }) {
       className={cn(
         "inline-flex items-center rounded px-2 py-0.5 text-xs font-medium",
         active
-          ? "bg-green-100 text-green-700"
-          : "bg-zinc-100 text-zinc-400",
+          ? "bg-green-100 text-green-700 dark:bg-green-500/15 dark:text-green-400"
+          : "bg-muted text-muted-foreground",
       )}
     >
       {active ? "Activo" : "Inactivo"}
@@ -49,10 +55,10 @@ export function StatusToggle({
       onClick={onToggle}
       className={cn(
         "relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-        active ? "bg-green-500" : "bg-zinc-300",
+        active ? "bg-green-500" : "bg-muted-foreground/30",
         disabled && "opacity-50",
       )}
-      style={{ ["--tw-ring-color" as string]: CONFIG_PURPLE }}
+      style={{ ["--tw-ring-color" as string]: CONFIG_PURPLE_TEXT }}
     >
       <span
         className={cn(
@@ -79,7 +85,7 @@ export function ActionButton({
   disabled?: boolean
 }) {
   const styles: Record<string, string> = {
-    neutral: "text-zinc-600 hover:bg-zinc-100",
+    neutral: "text-muted-foreground hover:bg-muted",
     danger: "bg-red-500 text-white hover:bg-red-600",
     purple: "text-white",
   }
@@ -118,8 +124,8 @@ export function AddButton({
       onClick={onClick}
       title={title}
       aria-label={title}
-      className="inline-flex size-12 items-center justify-center rounded-full border border-zinc-200 bg-white text-2xl font-light text-zinc-500 shadow-sm transition-colors hover:text-zinc-800 outline-none focus-visible:ring-2"
-      style={{ ["--tw-ring-color" as string]: CONFIG_PURPLE }}
+      className="inline-flex size-12 items-center justify-center rounded-full border border-border bg-card text-2xl font-light text-muted-foreground shadow-sm transition-colors hover:text-foreground outline-none focus-visible:ring-2"
+      style={{ ["--tw-ring-color" as string]: CONFIG_PURPLE_TEXT }}
     >
       +
     </button>
@@ -138,12 +144,12 @@ export function ConfigPageHeader({
     <header className="mb-6 flex items-center justify-between gap-4">
       <h1
         className="text-2xl font-bold tracking-tight"
-        style={{ color: CONFIG_PURPLE }}
+        style={{ color: CONFIG_PURPLE_TEXT }}
       >
         {title}
       </h1>
       {icon ? (
-        <div style={{ color: CONFIG_PURPLE }} className="shrink-0">
+        <div style={{ color: CONFIG_PURPLE_TEXT }} className="shrink-0">
           {icon}
         </div>
       ) : null}

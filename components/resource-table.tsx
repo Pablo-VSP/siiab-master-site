@@ -28,7 +28,7 @@ export function ResourceTable({ resources }: { resources: ResourceWithProject[] 
               <TableHead>Tipo</TableHead>
               <TableHead>Título</TableHead>
               <TableHead className="hidden sm:table-cell">Descripción</TableHead>
-              <TableHead>Proyecto</TableHead>
+              <TableHead>Sistema</TableHead>
               <TableHead className="text-right">Acción</TableHead>
             </TableRow>
           </TableHeader>

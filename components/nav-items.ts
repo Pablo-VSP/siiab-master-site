@@ -51,6 +51,28 @@ export function iconFor(name: string | null | undefined): LucideIcon {
   return ICONS[name.trim().toLowerCase()] ?? CircleDot
 }
 
+/**
+ * Ruta de una imagen de `public/logos` a partir del nombre que guarda Keymaster
+ * (sin extensión, p. ej. "Logos_PAG" o "Icono_Vista"). Devuelve null si el
+ * nombre no es un identificador simple, lo que evita rutas con `/` o `..`.
+ */
+export function logoSrc(name: string | null | undefined): string | null {
+  const clean = name?.trim()
+  if (!clean || !/^[A-Za-z0-9_-]+$/.test(clean)) return null
+  return `/logos/${clean}.png`
+}
+
+/**
+ * Imagen de una sección (`menu_menu.icon_name`). Ese campo mezcla dos cosas:
+ * claves de ícono lucide ("settings", "home") y nombres de logo ("Logos_PAG").
+ * Si la clave es un ícono conocido se usa el ícono; si no, se trata como logo.
+ */
+export function sectionImageSrc(iconName: string | null | undefined): string | null {
+  const clean = iconName?.trim()
+  if (!clean || ICONS[clean.toLowerCase()]) return null
+  return logoSrc(clean)
+}
+
 /** Una opción navegable ya lista para render. */
 export interface NavOption {
   key: string
@@ -60,6 +82,10 @@ export interface NavOption {
   /** true => abrir en nueva pestaña (external_url). */
   external: boolean
   icon: LucideIcon
+  /** Imagen de `public/logos` (campo `img`); si falta, se usa `icon`. */
+  imageSrc: string | null
+  /** Campo `command` de Keymaster ("Reporte", "Sitio", "View"...). */
+  command: string | null
   description: string | null
 }
 
@@ -68,6 +94,8 @@ export interface NavSection {
   key: string
   label: string
   icon: LucideIcon
+  /** Logo de `public/logos` (campo `icon_name`); si falta, se usa `icon`. */
+  imageSrc: string | null
   options: NavOption[]
 }
 
@@ -83,6 +111,7 @@ export function buildNavSections(groups: MenuGroup[]): NavSection[] {
       key: `menu-${g.pk_id}`,
       label: g.name,
       icon: iconFor(g.icon_name),
+      imageSrc: sectionImageSrc(g.icon_name),
       options: g.menu_options
         .filter((o) => o.active !== 0)
         .map((o) => {
@@ -94,6 +123,8 @@ export function buildNavSections(groups: MenuGroup[]): NavSection[] {
             href,
             external,
             icon: iconFor(o.icon_name),
+            imageSrc: logoSrc(o.img),
+            command: o.command,
             description: o.description,
           }
         })

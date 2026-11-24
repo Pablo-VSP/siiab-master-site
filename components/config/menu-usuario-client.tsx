@@ -156,15 +156,15 @@ export function MenuUsuarioClient({
           onChange={setMenuFilter}
           placeholder="Menú"
         />
-        <div className="flex min-w-[180px] items-center gap-2 rounded-md bg-zinc-100 px-3 py-1.5">
-          <Search className="size-4 shrink-0 text-zinc-400" />
+        <div className="flex min-w-[180px] items-center gap-2 rounded-md bg-muted px-3 py-1.5">
+          <Search className="size-4 shrink-0 text-muted-foreground" />
           <div className="flex flex-col">
-            <span className="text-[10px] leading-tight text-zinc-400">Estado</span>
+            <span className="text-[10px] leading-tight text-muted-foreground">Estado</span>
             <select
               aria-label="Filtrar por estado"
               value={status}
               onChange={(e) => setStatus(e.target.value as StatusFilter)}
-              className="bg-transparent text-sm text-zinc-700 outline-none"
+              className="bg-transparent text-sm text-foreground outline-none"
             >
               <option value="all">Todos</option>
               <option value="active">Activos</option>
@@ -175,12 +175,12 @@ export function MenuUsuarioClient({
         <AddButton onClick={openCreate} title="Nueva asignación" />
       </div>
 
-      {error && !modalOpen && <p className="mb-3 text-sm text-red-600">{error}</p>}
+      {error && !modalOpen && <p className="mb-3 text-sm text-red-600 dark:text-red-400">{error}</p>}
 
-      <div className="overflow-x-auto rounded-lg border border-zinc-200">
+      <div className="overflow-x-auto rounded-lg border border-border">
         <table className="w-full border-collapse text-sm">
           <thead>
-            <tr className="bg-[#6b2a6b] text-white">
+            <tr className="bg-config text-white">
               <th className="px-4 py-3 text-left font-semibold">Usuario</th>
               <th className="px-4 py-3 text-left font-semibold">Menú</th>
               <th className="px-4 py-3 text-left font-semibold">Estado</th>
@@ -190,18 +190,18 @@ export function MenuUsuarioClient({
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={4} className="px-4 py-10 text-center text-zinc-400">
+                <td colSpan={4} className="px-4 py-10 text-center text-muted-foreground">
                   No hay asignaciones que coincidan.
                 </td>
               </tr>
             ) : (
               filtered.map((a) => (
-                <tr key={a.pk_id} className="border-t border-zinc-100 hover:bg-zinc-50">
-                  <td className="px-4 py-3 text-zinc-800">
+                <tr key={a.pk_id} className="border-t border-border hover:bg-muted/50">
+                  <td className="px-4 py-3 text-foreground">
                     {userName(a)}{" "}
-                    <span className="text-zinc-400">({userLogin(a)})</span>
+                    <span className="text-muted-foreground">({userLogin(a)})</span>
                   </td>
-                  <td className="px-4 py-3 font-medium text-zinc-700">{menuName(a)}</td>
+                  <td className="px-4 py-3 font-medium text-foreground">{menuName(a)}</td>
                   <td className="px-4 py-3">
                     <StatusBadge active={a.active === 1} />
                   </td>
@@ -238,9 +238,9 @@ export function MenuUsuarioClient({
         title={editing ? "Editar asignación" : "Nueva asignación"}
       >
         <form onSubmit={submit} className="flex flex-col gap-4">
-          {error && modalOpen && <p className="text-sm text-red-600">{error}</p>}
+          {error && modalOpen && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
           <div className="flex flex-col gap-1">
-            <label htmlFor="mu-user" className="text-xs text-zinc-500">
+            <label htmlFor="mu-user" className="text-xs text-muted-foreground">
               Usuario
             </label>
             <select
@@ -248,7 +248,7 @@ export function MenuUsuarioClient({
               value={formUser}
               onChange={(e) => setFormUser(e.target.value)}
               required
-              className="rounded bg-zinc-100 px-3 py-2 text-sm text-zinc-800 outline-none"
+              className="rounded bg-muted px-3 py-2 text-sm text-foreground outline-none"
             >
               <option value="">Seleccionar usuario</option>
               {users.map((u) => (
@@ -259,7 +259,7 @@ export function MenuUsuarioClient({
             </select>
           </div>
           <div className="flex flex-col gap-1">
-            <label htmlFor="mu-menu" className="text-xs text-zinc-500">
+            <label htmlFor="mu-menu" className="text-xs text-muted-foreground">
               Menú
             </label>
             <select
@@ -267,7 +267,7 @@ export function MenuUsuarioClient({
               value={formMenu}
               onChange={(e) => setFormMenu(e.target.value)}
               required
-              className="rounded bg-zinc-100 px-3 py-2 text-sm text-zinc-800 outline-none"
+              className="rounded bg-muted px-3 py-2 text-sm text-foreground outline-none"
             >
               <option value="">Seleccionar menú</option>
               {perfiles.map((p) => (
@@ -283,7 +283,7 @@ export function MenuUsuarioClient({
               onToggle={() => setFormActive((v) => !v)}
               label="Activo"
             />
-            <span className="text-sm text-zinc-600">
+            <span className="text-sm text-muted-foreground">
               {formActive ? "Activo" : "Inactivo"}
             </span>
           </div>
@@ -319,14 +319,14 @@ function SelectFilter({
   placeholder: string
 }) {
   return (
-    <div className="flex min-w-[200px] flex-1 items-center gap-2 rounded-md bg-zinc-100 px-3 py-2">
-      <Search className="size-4 shrink-0 text-zinc-400" />
+    <div className="flex min-w-[200px] flex-1 items-center gap-2 rounded-md bg-muted px-3 py-2">
+      <Search className="size-4 shrink-0 text-muted-foreground" />
       <input
         aria-label={label}
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-transparent text-sm text-zinc-700 outline-none placeholder:text-zinc-400"
+        className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
       />
     </div>
   )
